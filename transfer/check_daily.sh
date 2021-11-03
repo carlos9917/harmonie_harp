@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 DEST=/home/ms/dk/nhd/R/harmonie_harp/transfer
-ORIG=/home/ms/ie/duuw/harmonie_harp/scr/
+ORIG=/home/ms/ie/duuw/R/harmonie_harp/scr
 MODEL=EC9
 
 cd $DEST
@@ -11,8 +11,8 @@ function transfer_all_figs()
 {
 #Copying over the figures to hirlam
 for PNG in `ls -1 *png`; do
- scp -p $PNG cperalta@hirlam.org:/data/portal/uwc_west/figs/
  chmod 755 $PNG
+ scp -p $PNG cperalta@hirlam.org:/data/portal/uwc_west/figs/
  #FPRE=`echo $PNG | awk '{print substr($1,1,10)}'`
  #if [ $FPRE == "scorecards" ]; then
  # DATE1=`echo $PNG | awk -F"_" '{print $2}'`
@@ -33,8 +33,9 @@ else
 fi
 
 #Copy plots from duuw, or wherever they were generated
-# (paths hardcoded in script for the moment)
+# paths hardcoded in script for the moment
 $py38 ./get_new_plots.py -orig $ORIG -dest $DEST
+
 #Transfer all files to hirlam
 transfer_all_figs
 
@@ -49,6 +50,9 @@ echo "Transferring updated html"
 chmod 755 html/scorecards.html
 chmod 755 html/scores.html
 chmod 755 html/*.html
+chmod 744 index.html
+
+scp -p index.html cperalta@hirlam.org:/data/portal/uwc_west
 
 cd html
 for HTML in `ls *.html`;do

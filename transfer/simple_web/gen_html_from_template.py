@@ -69,13 +69,15 @@ else:
 template = env.get_template('vertical_profiles.html')
 filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
 
-for var in ["T","RH","S"]:
-    with open(filename, 'w') as fh:
-        fh.write(template.render(
-             model = model,
-             pngfile="_".join(["vprof_bias",day,var,domain+".png"),
-             domain = domain
-        			))
+day = period.split("_")[-1]
+with open(filename, 'w') as fh:
+    fh.write(template.render(
+         model = model,
+         pngT="_".join(["vprof_bias",day,"T",domain+".png"]),
+         pngS="_".join(["vprof_bias",day,"S",domain+".png"]),
+         pngRH="_".join(["vprof_bias",day,"RH",domain+".png"]),
+         domain = domain
+    			))
 
 #TODO:
 #template = env.get_template('score_cards_threshold.html')
