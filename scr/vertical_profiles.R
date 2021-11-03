@@ -60,7 +60,7 @@ pngfile <- paste("vert_prof_",as.character(date),".png",sep="")
 pooled_by <- "SID"
 #models_to_compare <- c(ref_model, fcst_model)
 
-parameters <- c("T") #,"RH","S","D","Q")
+parameters <- c("T","RH","S") #,"D","Q")
 # Listing from one of the sql files:
 #1         p           0     hPa
 #2         Z           0       m
