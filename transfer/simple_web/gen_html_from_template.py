@@ -20,7 +20,7 @@ else:
     period = sys.argv[2]
     domain = sys.argv[3]
 
-#Modify the html template for standard scores
+#Modify the html template for score cards
 template = env.get_template('scorecards.html')
 if domain == "DINI":
     filename = os.path.join(root, 'html', 'scorecards.html')
@@ -41,6 +41,7 @@ else:
              domain = domain
         			))
 
+#Modify the html template for standard scores
 template = env.get_template('scores.html')
 if domain == "DINI":
     filename = os.path.join(root, 'html', 'scores.html')
@@ -64,6 +65,18 @@ else:
              domain = domain
         			))
     
+#Modify the html template for vertical profiles
+template = env.get_template('vertical_profiles.html')
+filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
+
+for var in ["T","RH","S"]:
+    with open(filename, 'w') as fh:
+        fh.write(template.render(
+             model = model,
+             pngfile="_".join(["vprof_bias",day,var,domain+".png"),
+             domain = domain
+        			))
+
 #TODO:
 #template = env.get_template('score_cards_threshold.html')
 #template = env.get_template('vertical_profiles.html')

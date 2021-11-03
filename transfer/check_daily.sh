@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-cd /home/ms/dk/nhd/scripts/harmonie_harp/transfer
-py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
+DEST=/home/ms/dk/nhd/R/harmonie_harp/transfer
+ORIG=/home/ms/ie/duuw/harmonie_harp/scr/
 MODEL=EC9
+
+cd $DEST
+py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
 
 
 function transfer_all_figs()
@@ -31,8 +34,7 @@ fi
 
 #Copy plots from duuw, or wherever they were generated
 # (paths hardcoded in script for the moment)
-$py38 ./get_new_plots.py
-
+$py38 ./get_new_plots.py -orig $ORIG -dest $DEST
 #Transfer all files to hirlam
 transfer_all_figs
 

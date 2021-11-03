@@ -21,10 +21,27 @@ def copy_over_plots(filepath,localpath):
             print("{cmd} failed with {err}")
 
 if __name__ == "__main__":
-    duuwpath = "/home/ms/ie/duuw/harmonie_harp/scr/"
+    import argparse
+    from argparse import RawTextHelpFormatter
+    parser = argparse.ArgumentParser(description='''
+     Example usage: python3 get_new_plots.py -origin path1 -dest path'''
+            , formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('-origin',help='Where I am copying the files from',
+                        type=str,
+                        default=None,
+                        required=True)
+    parser.add_argument('-dest',help='Where I am copying the files to',
+                        type=str,
+                        default=None,
+                        required=True)
+    args = parser.parse_args()
+    duuwpath=args.origin
+    localpath=args.dest
+    #duuwpath = "/home/ms/ie/duuw/harmonie_harp/scr/"
+    #localpath = "/home/ms/dk/nhd/scripts/harmonie_harp/transfer"
     files=[]
     for path in Path(duuwpath).rglob('*png'):
         files.append(str(PurePath(path)))
-    localpath = "/home/ms/dk/nhd/scripts/harmonie_harp/transfer"
     for f in files:
         copy_over_plots(f,localpath)
