@@ -66,9 +66,9 @@ def untar(files,destination) -> list:
         #Remove the tarball if tar command worked
         delete_tarball = os.path.join(destination,f)
         print(f"Removing tarball {delete_tarball} after untar")
-        #os.remove(this_file)
+        os.remove(delete_tarball)
     listfiles = os.listdir(destination)
-    filter_tarballs = [f for f in listfiles if any(f.endswith(fend) in f for fend in ['.tar.gz','.tar'])]
+    filter_tarballs = [f for f in listfiles if any(f.endswith(fend) for fend in ['.tar.gz','.tar'])]
 
     return filter_tarballs
 

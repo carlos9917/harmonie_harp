@@ -1,9 +1,10 @@
 library(RSQLite)
 
-#Only these domains have been hard-coded below!
+#Only these domains have been hard-coded below for SYNOP stations!
 available_domains <- c("DK","DKland","DKcoast","Greenland","IE_EN","NL","IS")
 
 #This one returns only the corners of selected domains
+#Currently being used to select TEMP stations 
 dom_corners <- function(domain)
      {
          avail_corners <- c("IE_EN","IS","NL")
@@ -42,6 +43,16 @@ dom_corners <- function(domain)
          return(corner_list)
 
      }
+     #This box is too big, end hitting Swedish and German stations
+     #if (domain == "DK") #Continental DK bounding box
+     #{
+     #     slat <- 54.0
+     #     wlon <- 8.0
+     #     nlat <- 58.0
+     #     elon <- 13.0
+     #    corner_list <- list(slat=slat,wlon=wlon,nlat=nlat,elon=elon)
+     #    return(corner_list)
+     #}
 
     }
 
@@ -71,7 +82,7 @@ select_stations <- function(SID_beg,SID_end,sql_file)
 
 }
 
-#Print ALL stations SIDs in a forecast SQLite file
+#Print TEMP stations SIDs in a forecast SQLite file, given a domain box
 print_temp_stations <- function(sql_file,domain)
 {
     #con <- dbConnect(drv=RSQLite::SQLite(), dbname=sql_file)
@@ -82,7 +93,7 @@ print_temp_stations <- function(sql_file,domain)
     #print(unique(df$SID))
     corners <- dom_corners(domain)
 
-    stnlist <- domain_box(corners$slat, corners$wlon, corners$nlat, corners$elon,sql_file,"FC")
+    stnlist <- stations_domain_box(corners$slat, corners$wlon, corners$nlat, corners$elon,sql_file,"FC")
 
 
     #stnlist <- as.array(unique(df$SID))
@@ -104,7 +115,7 @@ pre_sel_lists <- function(domain,sql_file)
          wlon <- -11.0
          nlat <- 60.0
          elon <- 2.0
-         stnlist <- domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
+         stnlist <- stations_domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
          return (stnlist)
          }
 
@@ -114,7 +125,7 @@ pre_sel_lists <- function(domain,sql_file)
          wlon <- -25.0
          nlat <- 67.0
          elon <- -12.0 
-         stnlist <- domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
+         stnlist <- stations_domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
          return (stnlist)
          }
      if (domain == "NL") #Netherlands bounding box
@@ -123,7 +134,7 @@ pre_sel_lists <- function(domain,sql_file)
          wlon <- 1.5
          nlat <- 54.5
          elon <- 9.0
-         stnlist <- domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
+         stnlist <- stations_domain_box(slat, wlon, nlat, elon, sql_file,"SYNOP")
          return (stnlist)
 
      }
@@ -163,12 +174,18 @@ pre_sel_lists <- function(domain,sql_file)
 
 # returns the stations based on the domain box
 #Note it expects a synop sql file 
-domain_box <- function(slat, wlon, nlat, elon, sql_file, table)
+stations_domain_box <- function(slat, wlon, nlat, elon, sql_file, table)
 {
     con <- dbConnect(drv=RSQLite::SQLite(), dbname=sql_file)
     #df <- dbGetQuery(conn=con, statement=paste(paste("SELECT * FROM SYNOP", sep=""))
     df <- dbGetQuery(conn=con, statement=paste("SELECT * FROM ",table, sep=""))
     stations <- as.array(df[df$lat >= slat & df$lat <= nlat & df$lon >= wlon &  df$lon <= elon,]$SID)
+    #Just for checking output:
+    #lats <- as.array(df[df$lat >= slat & df$lat <= nlat & df$lon >= wlon &  df$lon <= elon,]$lat)
+    #lons <- as.array(df[df$lat >= slat & df$lat <= nlat & df$lon >= wlon &  df$lon <= elon,]$lon)
+    #print(unique(lats))
+    #print(unique(lons))
+    #print(unique(stations))
     dbDisconnect(con)
     return(as.array(unique(stations)))
 }

@@ -5,8 +5,8 @@
 module load R
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then 
-   IDATE=2021102600
-   EDATE=2021110100
+   IDATE=2021110100
+   EDATE=2021111400
    #if [ -f ./lastdate.txt ]; then
    #  echo "Using last date from ./lastdate.txt as beginning date"
    #  IDATE=`cat ./lastdate.txt`

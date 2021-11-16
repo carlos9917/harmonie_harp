@@ -47,11 +47,14 @@ fi
 #VERTICAL PROFILES COMING HERE
 if [ $VERT == 1 ]; then
 #echo ">>>>>> Doing vertical profiles  <<<<<<<<<"
-Rscript ./vertical_profiles.R -date $EDATE
-Rscript ./vertical_profiles.R -date $EDATE
-Rscript ./vertical_profiles.R -date $EDATE -domain "NL"
-Rscript ./vertical_profiles.R -date $EDATE -domain "IS"
+#Rscript ./vertical_profiles.R -date $EDATE
+#Rscript ./vertical_profiles.R -date $EDATE -domain "NL"
+#Rscript ./vertical_profiles.R -date $EDATE -domain "IS"
 Rscript ./vertical_profiles.R -date $EDATE -domain "IE_EN"
+
+#Explicitly giving stations for Denmark. Found these digging into SQL files
+#This not working for the moment. No matches in both FC and OBS
+#Rscript ./vertical_profiles.R -date $EDATE -station 6060,6181 -domain "DK"
 fi
 
 #Do this so that nhd can copy the files and then upload to hirlam

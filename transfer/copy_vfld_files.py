@@ -149,7 +149,7 @@ def clean_vfld_files(YYYY,MM,DD,MODEL,DEST):
     for f in delete_files:
         if os.path.isfile(f):
             print(f"Deleting {f}")
-            os.remove(f)
+            #os.remove(f)
 
 
 if __name__== '__main__':
@@ -226,6 +226,7 @@ if __name__== '__main__':
             els_in = ecf.call_els(MODEL,YYYY,MM)
             tarcopied = ecf.call_ecp(els_in,DEST)
             check_files = ecf.untar(tarcopied,DEST)
+            #sometimes data is in tar.gz, sometimes it is just a tar
             if len(check_files) != 0: 
                 check_again = ecf.untar(check_files,DEST)
             clean_vfld_files(YYYY,MM,DD,MODEL,DEST)

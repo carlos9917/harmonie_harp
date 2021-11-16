@@ -11,8 +11,8 @@ library(argparse)
 parser <- ArgumentParser()
 
 parser$add_argument("-station", type="character",
-    default="None",
-    help="Station to plot [default %(default)s]",
+    default=NULL,
+    help="Station(s) to plot [default %(default)s]",
     metavar="Temp station to plot")
 
 parser$add_argument("-date", type="character",
@@ -61,6 +61,7 @@ pooled_by <- "SID"
 #models_to_compare <- c(ref_model, fcst_model)
 
 parameters <- c("T","RH","S") #,"D","Q")
+#parameters <- c("RH") #,"D","Q")
 # Listing from one of the sql files:
 #1         p           0     hPa
 #2         Z           0       m
@@ -74,11 +75,25 @@ parameters <- c("T","RH","S") #,"D","Q")
 by_step <- "12h"
 
 source("select_stations.R")
-#Select stations for a particular domain, otherwise set this to NULL
-selected_stations <- NULL
-if (args$domain != "DINI") {
+selected_stations <- args$station #NULL
+#Select stations from list provided
+if (!is.null(args$station))  {
+    cat("Selecting stations from provided list ",args$station,"\n")
+    split_stations <- strsplit(args$station,",")
+    selected_stations <-c()
+     for (i in 1:lengths(split_stations)) {
+    selected_stations <- append(selected_stations, as.integer(split_stations[[1]][i]))
+    }
+check_stations <-  stations_domain_box(54, 8, 58, 13,"/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE/OBSTABLE_2021.sqlite","TEMP")
+print(check_stations)
+}
+
+#Select stations for a particular domain
+if ((args$domain != "DINI") & (is.null(args$station))) {
+    cat("Selecting stations from domain name ",args$domain,"\n")
 selected_stations <- print_temp_stations(sample_sql_file,args$domain)
 }
+
 yyyy <-substr(date, 1, 4)
 mm <- substr(date,5,6)
 last_dates_available <-c()
@@ -132,6 +147,10 @@ for (param in parameters) {
         vertical_coordinate = "pressure"
                              )
    #combine both 
+    #print("Observations")
+    #print(obs)
+    #print("Forecast")
+    #print(fcst)
    fcst_obs <- fcst %>%
     join_to_fcst(obs)
 
@@ -142,24 +161,25 @@ for (param in parameters) {
    pngfile <- paste(paste("vprof_bias",as.character(date),param,domain,sep="_"),".png",sep="")
    ggsave(pngfile)
 
-    for (stationID in selected_stations)
-    {
-    pngfile <- paste(paste("vprof",as.character(date),param,domain,stationID,sep="_"),".png",sep="")
-    
-    cat("Plotting vertical profile for station ",stationID,"\n")
-     plot_vertical_profile(
-         fcst, 
-         SID       = stationID,
-         fcdate    = date,
-         lead_time = 24
-                        )
-     #Apparently not possible to plot obs?!
-     #plot_vertical_profile(
-     #    obs, 
-     #    SID       = stationID,
-     #                   )
-      ggsave(pngfile)
-   }
+   #This plots individual stations. Turning it off for the moment
+   # for (stationID in selected_stations)
+   # {
+   #   pngfile <- paste(paste("vprof",as.character(date),param,domain,stationID,sep="_"),".png",sep="")
+ 
+   #   cat("Plotting vertical profile for station ",stationID,"\n")
+   #    plot_vertical_profile(
+   #      fcst, 
+   #      SID       = stationID,
+   #      fcdate    = date,
+   #      lead_time = 24
+   #                     )
+   #    #Apparently not possible to plot obs?!
+   #    #plot_vertical_profile(
+   #    #    obs, 
+   #    #    SID       = stationID,
+   #    #                   )
+   #     ggsave(pngfile)
+   #}
 
 
    #print(expand_date(obs,validdate))

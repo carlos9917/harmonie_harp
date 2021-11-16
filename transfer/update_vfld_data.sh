@@ -7,18 +7,20 @@
 # when usign "orig -ecfs" it will pull data from ECFS
 MODEL=EC9
 XPATH=/scratch/ms/dk/nhz/oprint/$MODEL
+DEST=$SCRATCH/vfld_vobs_sample/vfld
 #
 if [[ -z $1 ]] & [[ -z $2 ]]; then
   echo "Please provide date (YYYYMM or YYYYMMDD format) model and destination"
-  echo "Example 202109 EC9 $SCRATCH/vfld_vobs_sample"
+  echo "Example 202109 EC9 $SCRATCH/vfld_vobs_sample/vfld"
   echo "Model options: cca_dini25a_l90_arome EC9"
+  echo "Default model: $MODEL"
+  echo "Default destination: $DEST"
   exit 1
 else
   DATE=$1
   MODEL=$2
   #Default destination for duuw
   if [ -z $3 ]; then
-   DEST=$SCRATCH/vfld_vobs_sample/vfld
    echo "Using default for destination: $DEST"
   else
    DEST=$3
@@ -36,12 +38,14 @@ elif [[ $USER == duuw ]] & [[ $MODEL == cca_dini25a_l90_arome ]] ; then
   echo Using local data for user duuw
   module load python3
   #Use the option below if it is the end of the month and data has been archived
-  python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs"
-  #python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig /hpc/perm/ms/ie/duuw/HARMONIE/archive/$MODEL/archive/extract
+  #python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs"
+  python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig /hpc/perm/ms/ie/duuw/HARMONIE/archive/$MODEL/archive/extract
 else
     module load python3
     python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs"
 fi
 
-echo "Last processed vfld date $DATE" > lastdate_vfld.txt
+LAST=`ls -alrt $DEST/$MODEL/vfld${MODEL}${DATE}* | awk '{print $9}' | tail -1`
+#echo "Last processed vfld date $DATE" > lastdate_vfld_${MODEL}.txt
+echo "Last processed vfld date $DATE: $LAST" > lastdate_vfld_${MODEL}.txt
 
