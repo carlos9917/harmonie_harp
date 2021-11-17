@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/harmonie_harp/scr/err
-#SBATCH --output=/home/ms/ie/duuw/harmonie_harp/scr/out
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out
 #SBATCH --job-name=con2sql
 module load R
 

@@ -76,6 +76,7 @@ by_step <- "12h"
 
 source("select_stations.R")
 selected_stations <- args$station #NULL
+
 #Select stations from list provided
 if (!is.null(args$station))  {
     cat("Selecting stations from provided list ",args$station,"\n")
@@ -84,8 +85,8 @@ if (!is.null(args$station))  {
      for (i in 1:lengths(split_stations)) {
     selected_stations <- append(selected_stations, as.integer(split_stations[[1]][i]))
     }
-check_stations <-  stations_domain_box(54, 8, 58, 13,"/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE/OBSTABLE_2021.sqlite","TEMP")
-print(check_stations)
+#check_stations <-  stations_domain_box(54, 8, 58, 13,"/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE/OBSTABLE_2021.sqlite","TEMP")
+#print(check_stations)
 }
 
 #Select stations for a particular domain

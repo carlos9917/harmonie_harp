@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/harmonie_harp/scr/err
-#SBATCH --output=/home/ms/ie/duuw/harmonie_harp/scr/out
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out
 #SBATCH --job-name=harp
 
 SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
 cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
-   IDATE=2021100100
-   EDATE=2021103100
+   IDATE=2021110100
+   EDATE=2021111400
 else
    IDATE=$1
    EDATE=$2
 fi
 
-SCORES=0
-SCARDS=0
+SCORES=1
+SCARDS=1
 VERT=1
 
 module load R
@@ -47,9 +47,9 @@ fi
 #VERTICAL PROFILES COMING HERE
 if [ $VERT == 1 ]; then
 #echo ">>>>>> Doing vertical profiles  <<<<<<<<<"
-#Rscript ./vertical_profiles.R -date $EDATE
-#Rscript ./vertical_profiles.R -date $EDATE -domain "NL"
-#Rscript ./vertical_profiles.R -date $EDATE -domain "IS"
+Rscript ./vertical_profiles.R -date $EDATE
+Rscript ./vertical_profiles.R -date $EDATE -domain "NL"
+Rscript ./vertical_profiles.R -date $EDATE -domain "IS"
 Rscript ./vertical_profiles.R -date $EDATE -domain "IE_EN"
 
 #Explicitly giving stations for Denmark. Found these digging into SQL files
