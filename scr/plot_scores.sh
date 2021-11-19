@@ -7,15 +7,16 @@ SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
 cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
-   IDATE=2021110100
+   IDATE=2021090700
    EDATE=2021111400
+   VDATE=2021111300 #This one is for the vertical profiles
 else
    IDATE=$1
    EDATE=$2
 fi
 
-SCORES=1
-SCARDS=1
+SCORES=0
+SCARDS=0
 VERT=1
 
 module load R
@@ -46,11 +47,11 @@ fi
 
 #VERTICAL PROFILES COMING HERE
 if [ $VERT == 1 ]; then
-#echo ">>>>>> Doing vertical profiles  <<<<<<<<<"
-Rscript ./vertical_profiles.R -date $EDATE
-Rscript ./vertical_profiles.R -date $EDATE -domain "NL"
-Rscript ./vertical_profiles.R -date $EDATE -domain "IS"
-Rscript ./vertical_profiles.R -date $EDATE -domain "IE_EN"
+echo ">>>>>> Doing vertical profiles for $VDATE <<<<<<<<<"
+Rscript ./vertical_profiles.R -date $VDATE
+#Rscript ./vertical_profiles.R -date $VDATE -domain "NL"
+#Rscript ./vertical_profiles.R -date $VDATE -domain "IS"
+#Rscript ./vertical_profiles.R -date $VDATE -domain "IE_EN"
 
 #Explicitly giving stations for Denmark. Found these digging into SQL files
 #This not working for the moment. No matches in both FC and OBS
