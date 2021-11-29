@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err
-#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_conv
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_conv
 #SBATCH --job-name=con2sql
 module load R
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then 
-   IDATE=2021111400
-   EDATE=2021111623
+   IDATE=2021112100
+   EDATE=2021112723
    #if [ -f ./lastdate.txt ]; then
    #  echo "Using last date from ./lastdate.txt as beginning date"
    #  IDATE=`cat ./lastdate.txt`

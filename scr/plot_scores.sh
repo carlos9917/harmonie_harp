@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err
-#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_plot
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_plot
 #SBATCH --job-name=harp
 
 SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
@@ -15,9 +15,9 @@ else
    EDATE=$2
 fi
 
-SCORES=0
-SCARDS=0
-VERT=1
+SCARDS=1
+SCORES=1
+VERT=0
 
 module load R
 
