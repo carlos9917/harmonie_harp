@@ -38,7 +38,8 @@ else:
         fh.write(template.render(
              model = model,
              period = period.replace("_"," to "),
-             pngfile="scorecards_"+period+"_"+domain+".png",
+             #pngfile="scorecards_"+period+"_"+domain+".png",
+             pngfile="scorecards_"+domain+"_"+period+".png",
              domain = domain
         			))
 
