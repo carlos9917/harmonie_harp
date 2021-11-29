@@ -48,7 +48,9 @@ compare_dates_models <- function(models_to_compare,fcst_sql_path,vobs_sql_path,d
      #Not checking vobs at the moment.
      #last_date_vobs <-find_last_date(vobs_sql_path)
      #last_dates_available <- append(last_dates_available, last_date_vobs)
-    return((unique(last_dates_available) == 1))
+     # Check if the number of unique dates is 1, then both dates match?
+    #print(length(unique(last_dates_available)))
+    return((length(unique(last_dates_available)) == 1))
 
 }
 

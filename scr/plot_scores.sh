@@ -8,8 +8,8 @@ cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2021090700
-   EDATE=2021111400
-   VDATE=2021111300 #This one is for the vertical profiles
+   EDATE=2021112700
+   VDATE=2021112700 #This one is for the vertical profiles
 else
    IDATE=$1
    EDATE=$2
@@ -20,6 +20,8 @@ SCORES=1
 VERT=0
 
 module load R
+check_dates=`Rscript ./check_last_dtg.R -date $EDATE | tail -1 | awk '{print $2}'`
+echo $check_dates
 
 if [ $SCARDS == 1 ]; then
 # Plot score cards
