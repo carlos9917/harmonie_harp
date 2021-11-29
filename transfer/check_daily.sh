@@ -22,8 +22,9 @@ for PNG in `ls -1 *png`; do
 done
 }
 
-DATE1=2021100100
-DATE2=2021101023
+DATE1=2021090700 #setting up to the first available day fixed for the moment
+DATE2=2021111400
+
 if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide init and final date in YYYYMMDDHH format"
     exit 1
@@ -36,14 +37,18 @@ fi
 # paths hardcoded in script for the moment
 $py38 ./get_new_plots.py -orig $ORIG -dest $DEST
 
+
 #Transfer all files to hirlam
 transfer_all_figs
 
-#Generate modified html:
+#Generate modified html for SYNOP
 cd simple_web
-for DOMAIN in DK IE_EN NL IS DINI;  do
-$py38 ./gen_html_from_template.py $MODEL ${DATE1}_${DATE2}  $DOMAIN
+for DOMAIN in DK IE_EN NL IS DINI;  do 
+$py38 ./gen_html_from_template.py $MODEL ${DATE1}_${DATE2}  $DOMAIN "synop"
 done
+
+#Only do vertical for DINI
+$py38 ./gen_html_from_template.py $MODEL ${DATE1}_${DATE2} "DINI" "temp"
 
 #Send the modified html files to hirlam account:
 echo "Transferring updated html"

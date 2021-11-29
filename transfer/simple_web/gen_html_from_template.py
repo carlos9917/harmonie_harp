@@ -19,6 +19,7 @@ else:
     model = sys.argv[1]
     period = sys.argv[2]
     domain = sys.argv[3]
+    score_type = sys.argv[4]
 
 #Modify the html template for score cards
 template = env.get_template('scorecards.html')
@@ -37,7 +38,8 @@ else:
         fh.write(template.render(
              model = model,
              period = period.replace("_"," to "),
-             pngfile="scorecards_"+period+"_"+domain+".png",
+             #pngfile="scorecards_"+period+"_"+domain+".png",
+             pngfile="scorecards_"+domain+"_"+period+".png",
              domain = domain
         			))
 
@@ -70,15 +72,16 @@ template = env.get_template('vertical_profiles.html')
 filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
 
 day = period.split("_")[-1]
-with open(filename, 'w') as fh:
-    fh.write(template.render(
-         model = model,
-         pngT="_".join(["vprof_bias",day,"T",domain+".png"]),
-         pngS="_".join(["vprof_bias",day,"S",domain+".png"]),
-         pngRH="_".join(["vprof_bias",day,"RH",domain+".png"]),
-         domain = domain
-    			))
-
+if score_type == "temp":
+    with open(filename, 'w') as fh:
+        fh.write(template.render(
+             model = model,
+             pngT="_".join(["vprof_bias",day,"T",domain+".png"]),
+             pngS="_".join(["vprof_bias",day,"S",domain+".png"]),
+             pngRH="_".join(["vprof_bias",day,"RH",domain+".png"]),
+             domain = domain
+        			))
+    
 #TODO:
 #template = env.get_template('score_cards_threshold.html')
 #template = env.get_template('vertical_profiles.html')
