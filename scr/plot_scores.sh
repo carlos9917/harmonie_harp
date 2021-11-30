@@ -15,9 +15,9 @@ else
    EDATE=$2
 fi
 
-SCARDS=1
-SCORES=1
-VERT=0
+SCARDS=0
+SCORES=0
+VERT=1
 
 module load R
 check_dates=`Rscript ./check_last_dtg.R -date $EDATE | tail -1 | awk '{print $2}'`
