@@ -36,10 +36,11 @@ def copy_tarballs(YYYY,MM,DD,MODEL,OPATH,DEST):
         return
     else:
         import ecfs_copy as ecf
-        ecf.untar(untarfiles,DEST)
+        check_tarballs = ecf.untar(untarfiles,DEST)
     #delete the files
-    for f in files:
-        if f.endswith("tar.gz"):
+    if len(check_tarballs) != 0:
+        for f in check_tarballs:
+            #if f.endswith("tar.gz") or :
             this_file = os.path.join(DEST,f)
             if os.path.isfile(this_file):
                 print(f"Deleting {this_file}")

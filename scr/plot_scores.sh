@@ -2,26 +2,41 @@
 #SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_plot
 #SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_plot
 #SBATCH --job-name=harp
+AUTOSELDATES=1
+SCARDS=1
+SCORES=1
+VERT=0
+
+module load R
 
 SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
 cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2021090700
-   EDATE=2021112700
-   VDATE=2021112700 #This one is for the vertical profiles
+   EDATE=2021121200
+   VDATE=2021120100 #This one is for the vertical profiles
 else
    IDATE=$1
    EDATE=$2
 fi
 
-SCARDS=0
-SCORES=0
-VERT=1
+if [ $AUTOSELDATES == 1 ]; then
 
-module load R
-check_dates=`Rscript ./check_last_dtg.R -date $EDATE | tail -1 | awk '{print $2}'`
-echo $check_dates
+    YYYYMM=`date +'%Y%m'`
+    EDATE=`Rscript ./check_last_dtg.R -date $YYYYMM -models "EC9" | grep "Last date" | awk -F" " '{print $5}'`
+    echo "Selecting init and final date: $IDATE $EDATE"
+    echo "Based on last available date from EC9"
+
+else
+
+    CHECK_MODELS=`Rscript ./check_last_dtg.R -date $EDATE | tail -1 | awk '{print $2}'`
+    if [ $CHECK_MODELS == FALSE ]; then
+       Rscript ./check_last_dtg.R -date $EDATE | grep "Last date from"
+       echo "models final dates do not match!"
+       exit 1
+    fi
+fi
 
 if [ $SCARDS == 1 ]; then
 # Plot score cards

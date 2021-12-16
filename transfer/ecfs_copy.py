@@ -60,13 +60,14 @@ def untar(files,destination) -> list:
         try:
             ret = subprocess.check_output(cmd,shell=True)
             ret_clean = ret.rstrip().decode('utf-8')
-            print(f"Return from subprocess {ret_clean}")
+            #print(f"Return from subprocess {ret_clean}")
         except subprocess.CalledProcessError as err:
             print(f"untar failed with error {err}")
+        #moved this outside...    
         #Remove the tarball if tar command worked
-        delete_tarball = os.path.join(destination,f)
-        print(f"Removing tarball {delete_tarball} after untar")
-        os.remove(delete_tarball)
+        #delete_tarball = os.path.join(destination,f)
+        #print(f"Removing tarball {delete_tarball} after untar")
+        #os.remove(delete_tarball)
     listfiles = os.listdir(destination)
     filter_tarballs = [f for f in listfiles if any(f.endswith(fend) for fend in ['.tar.gz','.tar'])]
 
