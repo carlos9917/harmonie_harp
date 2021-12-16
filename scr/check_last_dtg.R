@@ -1,4 +1,13 @@
 #!/usr/bin/env Rscript
+
+#Check last date in sqlite file in sql_path_forecast
+#Currently is using "date" to determine which file to read,
+#so it just takes the year and month from the argument
+#Just for doing some debugging
+#
+# Run it like: Rscript check_last_dtg.R -date YYYYMM or -date YYYYMMDD (but it will only
+# take YYYY and MM from date for the moment)
+
 library(argparse)
 parser <- ArgumentParser()
 
