@@ -12,13 +12,13 @@ def copy_over_plots(filepath,localpath):
 
     path = Path(filepath)
     timestamp = date.fromtimestamp(path.stat().st_mtime)
-    if date.today() == timestamp:
-        print(f"copying {filepath} to {localpath} (modified on {timestamp})")
-        cmd = "cp "+filepath + " "+localpath
-        try:
-            ret = subprocess.check_output(cmd,shell=True)
-        except subprocess.CalledProcessError as err:
-            print("{cmd} failed with {err}")
+    #if date.today() == timestamp:
+    print(f"copying {filepath} to {localpath} (modified on {timestamp})")
+    cmd = "cp "+filepath + " "+localpath
+    try:
+        ret = subprocess.check_output(cmd,shell=True)
+    except subprocess.CalledProcessError as err:
+        print("{cmd} failed with {err}")
 
 if __name__ == "__main__":
     import argparse
