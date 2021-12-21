@@ -137,6 +137,10 @@ scorecard_data <- lapply(
 #This one uses the new bootstrap_verify function
 scorecard_data <- bind_point_verif(scorecard_data)
 
+#Save the verif data. Will this work here???
+save_point_verif(scorecard_data,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores")
+
+
 now <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
 figtitle <-ggtitle(paste("DINI domain. Last update: ",now))
 if (domain != "None"){
