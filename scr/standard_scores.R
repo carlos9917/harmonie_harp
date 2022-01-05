@@ -157,10 +157,11 @@ for (param in parameters) {
               show_progress = FALSE,
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
-   #Save the verif data
-   out_verif_file <-paste(paste("verif",param,start_date,end_date,sep="_"),".sqlite",sep="")
-   save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores")
-   #save_point_verif(verif,file.path("/scratch/ms/ie/duuw/vfld_vobs_sample",out_verif_file))
+   #Save the verif data. Naming of rds setup automatically by harp
+   if (domain == "None") {
+       cat("Saving scores for the whole domain \n")
+       save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
+   }    
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,
                          facet_by = vars(fcst_cycle),
                          filter_by = vars(grepl(";", fcst_cycle)))

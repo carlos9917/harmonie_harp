@@ -60,7 +60,8 @@ else
     python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs"
 fi
 
-LAST=`ls -al $DEST/$MODEL/vfld${MODEL}${DATE}* | awk '{print $9}' | sort -n | tail -1`
+LAST=`ls -al $DEST/$MODEL/vfld${MODEL}* | awk '{print $9}' | sort -n | tail -1`
 #echo "Last processed vfld date $DATE" > lastdate_vfld_${MODEL}.txt
-echo "Last processed vfld date $DATE: $LAST" > lastdate_vfld_${MODEL}.txt
+echo "Last requested date: $DATE" > lastdate_vfld_${MODEL}.txt
+echo "Last available date: $LAST" >> lastdate_vfld_${MODEL}.txt
 

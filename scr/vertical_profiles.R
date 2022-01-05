@@ -158,6 +158,13 @@ for (param in parameters) {
    #print(expand_date(fcst, fcdate))
    
    verif <- det_verify(fcst_obs, param, groupings = c("leadtime", "p"))
+   #Save the verif data
+   if (domain == "None") {
+        cat("Saving vert prof scores for the whole domain \n")
+
+        save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/vertical_profiles")
+   }     
+
    plot_profile_verif(verif, bias, facet_by = vars(leadtime))
    pngfile <- paste(paste("vprof_bias",as.character(date),param,domain,sep="_"),".png",sep="")
    ggsave(pngfile)
