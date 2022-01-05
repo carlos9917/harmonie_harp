@@ -24,6 +24,7 @@ fi
 [ ! -d $DEST ] && mkdir -p $DEST
 module load python3
 python3 ./copy_vobs_files.py -date $DATE -dest $DEST -orig $ORIG #/hpc/perm/ms/ie/duuw/HARMONIE/archive/$MODEL/archive/extract
-LAST=`ls -al $DEST/vobs${DATE}* | awk '{print $9}' | tail -1`
-echo "Last processed vfld date $DATE: $LAST" > lastdate_vobs.txt
+LAST=`ls -al $DEST/vobs* | awk '{print $9}' | sort -n | tail -1`
+echo "Last requested vobs date: $DATE" > lastdate_vobs.txt
+echo "Last available vobs date: $LAST" >> lastdate_vobs.txt
 

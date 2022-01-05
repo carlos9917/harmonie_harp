@@ -158,7 +158,10 @@ for (param in parameters) {
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
    #Save the verif data. Naming of rds setup automatically by harp
-   save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/vertical_profiles")
+   if (domain == "None") {
+       cat("Saving scores for the whole domain \n")
+       save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
+   }    
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,
                          facet_by = vars(fcst_cycle),
                          filter_by = vars(grepl(";", fcst_cycle)))

@@ -4,13 +4,13 @@
 #SBATCH --job-name=con2sql
 module load R
 DINI=1
-REF=0
-VOBS=0
+REF=1
+VOBS=1
 AUTOSELDATES=0 #sets IDATE as last avail date in sqlfile, EDATE=IDATE+6d
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then 
-   IDATE=2021121200
-   EDATE=2021121400
+   IDATE=2021122400
+   EDATE=2021123100
    #if [ -f ./lastdate.txt ]; then
    #  echo "Using last date from ./lastdate.txt as beginning date"
    #  IDATE=`cat ./lastdate.txt`

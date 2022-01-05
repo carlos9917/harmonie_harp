@@ -137,8 +137,13 @@ scorecard_data <- lapply(
 #This one uses the new bootstrap_verify function
 scorecard_data <- bind_point_verif(scorecard_data)
 
-#Save the verif data. Will this work here???
-save_point_verif(scorecard_data,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores")
+#Save the verif data. Will this work here??? Only saving it for the whole domain
+#The naming of the output file is set automatically. Not changing it at this point
+#to avoid clashes with the shiny app
+if (domain == "None") {
+    cat("Saving score cards for the whole domain \n")
+    save_point_verif(scorecard_data,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/score_cards")
+}
 
 
 now <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")

@@ -7,8 +7,8 @@ $@
 GITREPO=/home/ms/ie/duuw/R/harmonie_harp
 #just for testing
 VOBS=1
-DINI=0
-REF=0 #EC9
+DINI=1
+REF=1 #EC9
 
 NOW=`date +'%Y%m%d_%H%M%S'`
 echo "--------------------------------------------------"
@@ -35,16 +35,17 @@ echo ">>>>>>>>>>>> VFLD DINI <<<<<<<<<<<<<<<<<<<<<<<<<"
 #Running it only on Wednesdays:
 DAY=`date +'%a'`
 if [ $DAY == "Wed" ]; then
+  echo ">>>>>>> Today is a Wednesday. Collecting EC9 data and submitting conv2sql at the end"
   echo ">>>>>>>>>>>> VFLD EC9 <<<<<<<<<<<<<<<<<<<<<<<<<"
   [ $REF == 1 ] && ./update_vfld_data.sh $YDAY EC9
   pid=$!
   wait $pid
   echo "$pid finished"
-  echo "Launching the script to convert data to sqlite"
   #Dates to process: begin from 7 days ago until yesterday
   YDAY_short=`echo $YDAY | awk '{print substr($1,1,8)}'`
   DATE1=`date -d "$YDAY_short - 7 days" +'%Y%m%d%H'`
   cd $GITREPO/scr
+  echo ">>>>>> Launching the script to convert data to sqlite. BEGIN: $DATE1 END: $YDAY"
   sbatch conv2sql.sh $DATE1 $YDAY
   cd -
 fi

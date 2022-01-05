@@ -5,7 +5,7 @@
 
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
 SCARDS=1 #calc score cards
-SCORES=0 #calc std scores
+SCORES=1 #calc std scores
 VERT=0 #do vertical profiles
 FORCE=1 # 1: do not check if models last dates match
 
@@ -15,9 +15,9 @@ SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
 cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
-   IDATE=2021090700
-   EDATE=2021121200
-   VDATE=2021121000 #This one is for the vertical profiles
+   IDATE=2021120100
+   EDATE=2021123123
+   VDATE=2021093000 #This one is for the vertical profiles
 else
    IDATE=$1
    EDATE=$2
@@ -46,7 +46,6 @@ if [ $SCARDS == 1 ]; then
 #NOTE: using default values for data paths here. See defaults in script
 echo ">>>>>> Doing score cards <<<<<<<<<"
 Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE
-exit 0
 Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "DK"
 Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "IE_EN"
 Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "NL"
@@ -59,11 +58,11 @@ fi
 #Selecting station list from domain
 if [ $SCORES == 1 ]; then
 echo ">>>>>> Doing standard scores <<<<<<<<<"
+Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE
 Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "DK"
 Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "IE_EN"
 Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "NL"
 Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "IS"
-Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE
 fi
 
 #VERTICAL PROFILES COMING HERE
