@@ -71,11 +71,15 @@ else:
 template = env.get_template('vertical_profiles.html')
 filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
 
-day = period.split("_")[-1]
 if score_type == "temp":
+    if "_" in period:
+        print("Please provide only one date for period")
+        sys.exit(1)
+    day = period #.split("_")[-1]
     with open(filename, 'w') as fh:
         fh.write(template.render(
              model = model,
+             day = day,
              pngT="_".join(["vprof_bias",day,"T",domain+".png"]),
              pngS="_".join(["vprof_bias",day,"S",domain+".png"]),
              pngRH="_".join(["vprof_bias",day,"RH",domain+".png"]),
