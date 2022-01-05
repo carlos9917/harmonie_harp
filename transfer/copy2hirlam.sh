@@ -23,8 +23,8 @@ for PNG in `ls -1 *png`; do
 done
 }
 
-DATE1=2021090700 #setting up to the first available day fixed for the moment
-DATE2=2021111400
+DATE1=2021120100 #setting up to the first available day fixed for the moment
+DATE2=2021123123
 
 if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide init and final date in YYYYMMDDHH format"
