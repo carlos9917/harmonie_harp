@@ -49,6 +49,16 @@ if [ $DAY == "Wed" ]; then
   sbatch conv2sql.sh $DATE1 $YDAY
   cd -
 fi
+#plot the scores
+if [ $DAY == "Thu" ]; then
+    cd $GITREPO/scr
+    YYYYMM=`date +'%Y%m'`
+    BEG=${YYYYMM}0100
+    END=${YDAY}23
+    echo ">>>>>> Launching the script to plot the data. BEGIN: ${BEG} END: ${END}"
+    sbatch plot_scores.sh $BEG $END
+fi
+
 NOW=`date +'%Y%m%d_%H%M%S'`
 echo "--------------------------------------------------"
 echo Finished on $NOW
