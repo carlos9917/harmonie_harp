@@ -31,6 +31,11 @@ parser$add_argument("-model", type="character",
     help="Model [default %(default)s]",
     metavar="String")
 
+parser$add_argument("-fclen", type="integer", 
+     default=24,
+    help="Forecast length [default %(default)s]",
+    metavar="Integer")
+
 args <- parser$parse_args()
 
 vfld_path <- args$vfld_path
@@ -38,17 +43,7 @@ vfld_sql_path <- args$vfld_sql
 fcst_model <- args$model
 first_fcst <-args$start_date
 last_fcst <- args$final_date
-
-    #Path for DINI
-    #vfld_sql_path   <- "/scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE"
-    
-    #Path for EC9
-    #vfld_path <- "/scratch/ms/dk/nhd/vfld_sample/"
-    #fcst_model <- "EC9" 
-    #first_fcst <- 2021090700
-    #last_fcst <-  2021100100
-#print(typeof(first_fcst))
-#print(last_fcst)
+fclen <- args$fclen
 
 surface_params  <- c("Pmsl","RH2m","S10m","T2m") #,"AccPcp12h","AccPcp24h") #Params to extract
 #allparams  <- c("AccPcp0h","AccPcp") #Params to extract
@@ -63,7 +58,7 @@ for (param in surface_params)
       end_date      = last_fcst,
       fcst_model     = fcst_model,
       parameter = param,
-      lead_time = seq(0,24,1),
+      lead_time = seq(0,fclen,1),
       file_path = vfld_path,
       file_template = "vfld",
       output_file_opts =  sqlite_opts(path =  vfld_sql_path),
@@ -81,7 +76,7 @@ for (param in vertical_params)
       end_date      = last_fcst,
       fcst_model     = fcst_model,
       parameter = param,
-      lead_time = seq(0,24,1),
+      lead_time = seq(0,fclen,1),
       file_path = vfld_path,
       file_template = "vfld",
       output_file_opts =  sqlite_opts(path =  vfld_sql_path),
@@ -92,25 +87,3 @@ for (param in vertical_params)
 
 #Write the last date processed
 #cat(last_fcst,file="lastdate.txt",sep="\n")
-
-
-#Now do it for dini
-#fcst_model <- "cca_dini25a_l90_arome"
-#cat("<<<<<< PROCESSING ",fcst_model, ">>>>>>>\n")
-#vfld_path <- "/scratch/ms/ie/duuw/vfld_vobs_sample/vfld"
-#for (param in allparams)
-#{
-#    cat("Saving ",param,"\n")
-#    read_forecast(
-#      start_date    = first_fcst,
-#      end_date      = last_fcst,
-#      fcst_model     = fcst_model,
-#      parameter = param,
-#      lead_time = seq(0,24,1),
-#      file_path = vfld_path,
-#      file_template = "vfld",
-#      output_file_opts =  sqlite_opts(path =  vfld_sql_path),
-#      return_data = TRUE
-#    )
-#
-#}
