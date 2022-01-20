@@ -5,12 +5,14 @@
 # This path is to copy data from 
 #Update files from EC9 model in Xiaohuas account
 # when usign "orig -ecfs" it will pull data from ECFS
+module load python3
 
 DAY_OF_THE_MONTH=`date +'%d'` # just to check the day of the month
 CURRENT_MONTH=`date +'%m'` # just to check the day of the month
 MODEL=EC9
 XPATH=/scratch/ms/dk/nhz/oprint/$MODEL
 DEST=$SCRATCH/vfld_vobs_sample/vfld
+ORIG="ecfs" #default origin of data. Alternative is local path (ie XPATH above)
 #
 if [[ -z $1 ]] & [[ -z $2 ]]; then
   echo "Please provide date (YYYYMM or YYYYMMDD format) model and destination"
@@ -34,15 +36,13 @@ fi
 DAY_REQUESTED=`echo $DATE | awk '{print substr($1,7,2)}'`
 MONTH_REQUESTED=`echo $DATE | awk '{print substr($1,5,2)}'`
 
-#cp $XPATH/vfld${MODEL}${YEAR}${MONTH}* ./$MODEL/
-if [ $USER == nhd ]; then
+#Considering some special cases for DINI below
+if [[ $USER == nhd ]] & [[ $MODEL == cca_dini25a_l90_arome  ]]; then
+  #this one is just for testing
   py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
-  $py38 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs" -sqlpath /scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE/EC9/2021/10
-  #$py38 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig $XPATH -sqlpath /scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE/EC9/2021/10
+  $py38 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs" -sqlpath /scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE/EC9/2022/01
 elif [[ $USER == duuw ]] & [[ $MODEL == cca_dini25a_l90_arome ]] ; then
-  module load python3
   #echo $DAY_OF_THE_MONTH
-  #if [[ $DAY_OF_THE_MONTH == 01 ]] && [[ $MONTH_REQUESTED !=  $CURRENT_MONTH ]] ; then
   if [[ $MONTH_REQUESTED !=  $CURRENT_MONTH ]] ; then
       echo " >>>> NEED TO pull out data from ecfs for $USER"
       echo "DO IT BY HAND! Gotta check why it pulls everything..."
@@ -56,8 +56,7 @@ elif [[ $USER == duuw ]] & [[ $MODEL == cca_dini25a_l90_arome ]] ; then
       python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig /hpc/perm/ms/ie/duuw/HARMONIE/archive/$MODEL/archive/extract
    fi
 else
-    module load python3
-    python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs"
+    python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig $ORIG #"ecfs"
 fi
 
 LAST=`ls -al $DEST/$MODEL/vfld${MODEL}* | awk '{print $9}' | sort -n | tail -1`

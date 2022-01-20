@@ -1,3 +1,5 @@
 .RData
 .Rhistory
 *png
+transfer/simple_web/html/*.html
+out_cron.txt
