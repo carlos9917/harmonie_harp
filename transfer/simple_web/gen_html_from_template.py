@@ -21,6 +21,16 @@ else:
     domain = sys.argv[3]
     score_type = sys.argv[4]
 
+# change the timestamp in index.html
+template = env.get_template('index.html')
+filename = os.path.join(root, 'html', 'index.html')
+from datetime import datetime
+lastmodified = datetime.strftime(datetime.now(),"%Y/%m/%d %H:%M:%S")
+with open(filename, 'w') as fh:
+    fh.write(template.render(
+         lastmodified = lastmodified
+        			))
+
 #Modify the html template for score cards
 template = env.get_template('scorecards.html')
 if domain == "DINI":

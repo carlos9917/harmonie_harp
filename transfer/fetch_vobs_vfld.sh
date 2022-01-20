@@ -5,10 +5,13 @@ export PATH=/usr/local/bin:$PATH
 $@
 
 GITREPO=/home/ms/ie/duuw/R/harmonie_harp
-#just for testing
+#just for testing. Do the test, ref and collect vobs
 VOBS=1
 DINI=1
-REF=1 #EC9
+REF=1 #usually EC9
+
+TEST_MODEL=cca_dini25a_l90_arome
+REF_MODEL=EC9
 
 NOW=`date +'%Y%m%d_%H%M%S'`
 echo "--------------------------------------------------"
@@ -28,16 +31,16 @@ fi
 echo ">>>>>>>>>>>> VOBS <<<<<<<<<<<<<<<<<<<<<<<<<"
 [ $VOBS == 1 ] && ./update_vobs_data.sh $YDAY
 
-echo ">>>>>>>>>>>> VFLD DINI <<<<<<<<<<<<<<<<<<<<<<<<<"
-[ $DINI == 1 ] && ./update_vfld_data.sh $YDAY cca_dini25a_l90_arome 
+echo ">>>>>>>>>>>> VFLD $TEST_MODEL <<<<<<<<<<<<<<<<<<<<<<<<<"
+[ $DINI == 1 ] && ./update_vfld_data.sh $YDAY $TEST_MODEL
 
 #This one will do the whole month for the moment...
 #Running it only on Wednesdays:
 DAY=`date +'%a'`
 if [ $DAY == "Wed" ]; then
-  echo ">>>>>>> Today is a Wednesday. Collecting EC9 data and submitting conv2sql at the end"
-  echo ">>>>>>>>>>>> VFLD EC9 <<<<<<<<<<<<<<<<<<<<<<<<<"
-  [ $REF == 1 ] && ./update_vfld_data.sh $YDAY EC9
+  echo ">>>>>>> Today is a Wednesday. Collecting $REF_MODEL data and submitting conv2sql at the end"
+  echo ">>>>>>>>>>>> VFLD $REF_MODEL <<<<<<<<<<<<<<<<<<<<<<<<<"
+  [ $REF == 1 ] && ./update_vfld_data.sh $YDAY $REF_MODEL
   pid=$!
   wait $pid
   echo "$pid finished"
