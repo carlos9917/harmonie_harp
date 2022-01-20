@@ -55,8 +55,8 @@ fi
 
 #Send the modified html files to hirlam account:
 echo "Transferring updated html"
-#chmod 755 html/scorecards.html
-#chmod 755 html/scores.html
+chmod 755 html/scorecards.html
+chmod 755 html/scores.html
 chmod 755 html/*.html
 #chmod 744 index.html
 
@@ -64,6 +64,7 @@ scp -p index.html cperalta@hirlam.org:/data/portal/uwc_west
 
 cd html
 for HTML in `ls *.html`;do
+  echo "Sending $HTML to hirlam"
   scp -p $HTML cperalta@hirlam.org:/data/portal/uwc_west
 done
 cd -

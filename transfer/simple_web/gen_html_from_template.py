@@ -30,7 +30,6 @@ with open(filename, 'w') as fh:
     fh.write(template.render(
          lastmodified = lastmodified
         			))
-sys.exit(1)
 
 #Modify the html template for score cards
 template = env.get_template('scorecards.html')
