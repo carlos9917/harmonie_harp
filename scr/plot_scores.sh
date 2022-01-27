@@ -3,6 +3,8 @@
 #SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_plot
 #SBATCH --job-name=harp
 
+# Script to plot the scores for ECDS
+
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
 SCARDS=1 #calc score cards
 SCORES=1 #calc std scores

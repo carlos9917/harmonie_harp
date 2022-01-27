@@ -2,6 +2,9 @@
 #SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_conv
 #SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_conv
 #SBATCH --job-name=con2sql
+
+# Script to run the conversion from vfld and vobs to sqlite format.
+# Used only for the ECDS and EC9 data
 module load R
 DINI=1
 REF=1
