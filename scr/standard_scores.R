@@ -52,6 +52,10 @@ parser$add_argument("-sql_path_observation", type="character",
     help="Path for sqlite files with observations [default %(default)s]",
     metavar="Observation data")
 
+#NOTE: store_false sets this to TRUE if the argument is NOT called, otherwise to FALSE if it is called
+# Hence it is TRUE by default
+parser$add_argument("-save_rds", action="store_false",
+                help="Save rds file for verification or not [default %(default)s]")
 
 
 source("find_last_date.R")
@@ -61,6 +65,7 @@ fcst_sql_path <- args$sql_path_forecast
 vobs_sql_path <- args$sql_path_observation
 end_date <- args$final_date
 start_date <- args$start_date
+save_rds <- args$save_rds
 models <- strsplit(args$models,",")
 models_to_compare <-c()
 for (i in 1:lengths(models)) {
@@ -158,7 +163,7 @@ for (param in parameters) {
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
    #Save the verif data. Naming of rds setup automatically by harp
-   if (domain == "None") {
+   if (domain == "None" && save_rds) {
        cat("Saving scores for the whole domain \n")
        save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
    }    

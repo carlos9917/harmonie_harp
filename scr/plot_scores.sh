@@ -3,10 +3,12 @@
 #SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_plot
 #SBATCH --job-name=harp
 
+# Script to plot the scores for ECDS
+
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
 SCARDS=1 #calc score cards
 SCORES=1 #calc std scores
-VERT=0 #do vertical profiles
+VERT=1 #do vertical profiles
 FORCE=1 # 1: do not check if models last dates match
 
 module load R
@@ -17,10 +19,12 @@ cd $SCRPATH
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2021120100
    EDATE=2021123123
-   VDATE=2021093000 #This one is for the vertical profiles
+   VDATE=2022011700 #This one is for the vertical profiles
 else
    IDATE=$1
    EDATE=$2
+   #selecting vertical profile date as first date. I usually get missing data in one of the variables when using the last
+   VDATE=$IDATE
 fi
 
 if [ $AUTOSELDATES == 1 ]; then

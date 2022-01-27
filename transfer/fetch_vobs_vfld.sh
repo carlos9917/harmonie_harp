@@ -6,9 +6,9 @@ $@
 
 GITREPO=/home/ms/ie/duuw/R/harmonie_harp
 #just for testing. Do the test, ref and collect vobs
-VOBS=1
-DINI=1
-REF=1 #usually EC9
+VOBS=0
+DINI=0
+REF=0 #usually EC9
 
 TEST_MODEL=cca_dini25a_l90_arome
 REF_MODEL=EC9
@@ -32,7 +32,7 @@ echo ">>>>>>>>>>>> VOBS <<<<<<<<<<<<<<<<<<<<<<<<<"
 [ $VOBS == 1 ] && ./update_vobs_data.sh $YDAY
 
 echo ">>>>>>>>>>>> VFLD $TEST_MODEL <<<<<<<<<<<<<<<<<<<<<<<<<"
-[ $DINI == 1 ] && ./update_vfld_data.sh $YDAY $TEST_MODEL
+[ $DINI == 1 ] && ./update_dini.sh $YDAY $TEST_MODEL
 
 #This one will do the whole month for the moment...
 #Running it only on Wednesdays:
@@ -40,10 +40,12 @@ DAY=`date +'%a'`
 if [ $DAY == "Wed" ]; then
   echo ">>>>>>> Today is a Wednesday. Collecting $REF_MODEL data and submitting conv2sql at the end"
   echo ">>>>>>>>>>>> VFLD $REF_MODEL <<<<<<<<<<<<<<<<<<<<<<<<<"
-  [ $REF == 1 ] && ./update_vfld_data.sh $YDAY $REF_MODEL
-  pid=$!
-  wait $pid
-  echo "$pid finished"
+  if [ $REF == 1 ]; then
+      ./update_EC9.sh $YDAY #$REF_MODEL
+      pid=$!
+      wait $pid
+      echo "$pid finished for $REF_MODEL processing"
+  fi    
   #Dates to process: begin from 7 days ago until yesterday
   YDAY_short=`echo $YDAY | awk '{print substr($1,1,8)}'`
   DATE1=`date -d "$YDAY_short - 7 days" +'%Y%m%d%H'`

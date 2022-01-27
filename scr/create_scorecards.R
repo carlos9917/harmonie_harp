@@ -39,6 +39,12 @@ parser$add_argument("-domain", type="character",
     help="Domain to analyze [default %(default)s]",
     metavar="Domain to analyze. It will select stations based on pre-selected list ")
 
+#NOTE: store_false sets this to TRUE if the argument is NOT called, otherwise to FALSE if it is called
+# Hence it is TRUE by default
+parser$add_argument("-save_rds", action="store_false",
+                   help="Save rds file for verification or not [default %(default)s]")
+
+
 source("find_last_date.R")
 
 args <- parser$parse_args()
@@ -46,14 +52,14 @@ args <- parser$parse_args()
 #Path with the sqlite data
 fcst_sql_path   <- args$sql_path_forecast #     <- "/scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE"
 vobs_sql_path   <- args$sql_path_observation #     <- "/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE"
-#start_date <- 2021090700 #now a command-line argument
 
-#These don't change for the moment, 
-fcst_model <- args$fcst_model #"cca_dini25a_l90_arome"
-ref_model <- args$ref_model # "EC9"
+fcst_model <- args$fcst_model
+ref_model <- args$ref_model
 end_date <- args$final_date
 start_date <- args$start_date
 domain <- args$domain
+save_rds <- args$save_rds
+
 
 # If no end_date given, take it from last available date
 if (end_date == "None") 
@@ -140,7 +146,7 @@ scorecard_data <- bind_point_verif(scorecard_data)
 #Save the verif data. Will this work here??? Only saving it for the whole domain
 #The naming of the output file is set automatically. Not changing it at this point
 #to avoid clashes with the shiny app
-if (domain == "None") {
+if (domain == "None" && save_rds) {
     cat("Saving score cards for the whole domain \n")
     save_point_verif(scorecard_data,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/score_cards")
 }

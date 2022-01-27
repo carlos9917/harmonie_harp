@@ -37,11 +37,11 @@ DAY_REQUESTED=`echo $DATE | awk '{print substr($1,7,2)}'`
 MONTH_REQUESTED=`echo $DATE | awk '{print substr($1,5,2)}'`
 
 #Considering some special cases for DINI below
-if [[ $USER == nhd ]] & [[ $MODEL == cca_dini25a_l90_arome  ]]; then
+if [[ $USER == "nhd" ]] && [[ $MODEL == "cca_dini25a_l90_arome"  ]]; then
   #this one is just for testing
-  py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
-  $py38 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs" -sqlpath /scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE/EC9/2022/01
-elif [[ $USER == duuw ]] & [[ $MODEL == cca_dini25a_l90_arome ]] ; then
+  #py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
+  python3 ./copy_vfld_files.py -date $DATE -model $MODEL -dest $DEST -orig "ecfs" -sqlpath /scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE/EC9/2022/01
+elif [[ $USER -eq "duuw" ]] && [[ $MODEL -eq "cca_dini25a_l90_arome" ]] ; then
   #echo $DAY_OF_THE_MONTH
   if [[ $MONTH_REQUESTED !=  $CURRENT_MONTH ]] ; then
       echo " >>>> NEED TO pull out data from ecfs for $USER"
