@@ -33,7 +33,7 @@ with open(filename, 'w') as fh:
 
 #Modify the html template for score cards
 template = env.get_template('scorecards.html')
-if domain == "DINI":
+if domain == "DINI" and score_type == "synop":
     filename = os.path.join(root, 'html', 'scorecards.html')
     with open(filename, 'w') as fh:
         fh.write(template.render(
@@ -42,7 +42,7 @@ if domain == "DINI":
              pngfile="scorecards_"+period+".png"
         
         			))
-else:
+elif score_type == "synop":
     filename = os.path.join(root, 'html', 'scorecards_'+domain+'.html')
     with open(filename, 'w') as fh:
         fh.write(template.render(
@@ -55,7 +55,7 @@ else:
 
 #Modify the html template for standard scores
 template = env.get_template('scores.html')
-if domain == "DINI":
+if domain == "DINI" and score_type == "synop":
     filename = os.path.join(root, 'html', 'scores.html')
     with open(filename, 'w') as fh:
         fh.write(template.render(
@@ -65,7 +65,7 @@ if domain == "DINI":
              pngpmsl="bias_stde_Pmsl_"+period+".png",
              pngrh2m="bias_stde_RH2m_"+period+".png",
         			))
-else:        
+elif score_type == "synop":
     filename = os.path.join(root, 'html', 'scores_'+domain+'.html')
     with open(filename, 'w') as fh:
         fh.write(template.render(

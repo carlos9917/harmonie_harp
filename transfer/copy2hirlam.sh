@@ -38,9 +38,6 @@ fi
 # paths hardcoded in script for the moment
 $py38 ./get_new_plots.py -orig $ORIG -dest $DEST
 
-#Transfer all files to hirlam
-echo "Copying all the files from $ORIG"
-transfer_all_figs
 
 #Generate modified html for SYNOP
 cd simple_web
@@ -55,6 +52,10 @@ if [ $VPROF == 1 ]; then
 echo "Updating TEMP plots in html templates"
 $py38 ./gen_html_from_template.py $MODEL ${DATE1} "DINI" "temp"
 fi
+
+#Transfer all figures  to hirlam
+echo "Copying all the figures from $ORIG to hirlam"
+transfer_all_figs
 
 #Send the modified html files to hirlam account:
 echo "Transferring updated html"
