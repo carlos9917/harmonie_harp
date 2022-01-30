@@ -32,5 +32,21 @@ cca_dini25a_l90_arome
 EC9
 
 ### STILL TO DO:
+- Filter by number of cases, to avoid scores with zero number of measuremnts
+- Convert units after joining obs and fcst. Example:
+```
+if ({{param}} == "T2m" ){
+                 fcst <- join_to_fcst(
+                 scale_point_forecast(fcst, -273.15, "degC"),
+                 scale_point_obs(obs, T2m, -273.15, "degC")
+                 )
+            }
+ 
+            else if ({{param}} == "Q2m" || {{param}} == "Q1000" || {{param}} == "Q850" || {{param}} == "Q700" ){
+                  fcst <- join_to_fcst(
+                  scale_point_forecast(fcst, 1000, "g/Kg", multiplicative = TRUE),
+                  scale_point_obs(obs, {{param}}, 1000, "g/Kg", multiplicative = TRUE)
+                  )
+                }
+```
 - Add scores on a map
-

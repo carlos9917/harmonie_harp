@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_conv
-#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_conv
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/cron_conv.err
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/cron_conv.out
 #SBATCH --job-name=con2sql
 
 # Script to run the conversion from vfld and vobs to sqlite format.

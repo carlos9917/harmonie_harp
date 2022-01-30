@@ -6,9 +6,9 @@ $@
 
 GITREPO=/home/ms/ie/duuw/R/harmonie_harp
 #just for testing. Do the test, ref and collect vobs
-VOBS=0
-DINI=0
-REF=0 #usually EC9
+VOBS=1
+DINI=1
+REF=1 #usually EC9
 
 TEST_MODEL=cca_dini25a_l90_arome
 REF_MODEL=EC9
