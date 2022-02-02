@@ -32,7 +32,6 @@ cca_dini25a_l90_arome
 EC9
 
 ### STILL TO DO:
-- Filter by number of cases, to avoid scores with zero number of measuremnts
 - Convert units after joining obs and fcst. Example:
 ```
 if ({{param}} == "T2m" ){
