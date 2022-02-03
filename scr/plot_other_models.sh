@@ -6,19 +6,20 @@
 # a more flexible version of the plot_scores.sh script, which
 # is used solely to produce plots for the ECDS run
 
-SCARDS=1 #calc score cards
+SCARDS=0 #calc score cards
 SCORES=1 #calc std scores
 VERT=0 #do vertical profiles
-OUTDIR=$SCRATCH/vfld_vobs_sample/verif_scores/NL_plots/no_filter
+OUTDIR=$SCRATCH/vfld_vobs_sample/verif_scores/NL_plots
 
 module load R
 
 SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
 cd $SCRPATH
 
+
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2022012000
-   EDATE=2022012600
+   EDATE=2022020100
    VDATE=2022012000
 else
    IDATE=$1

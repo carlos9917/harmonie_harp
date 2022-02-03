@@ -159,8 +159,33 @@ for (param in parameters) {
         obs_path   = vobs_sql_path,
         stations = selected_stations
                              )
-   fcst_obs <- fcst %>%
-    join_to_fcst(obs)
+#Original version    
+#   fcst_obs <- fcst %>%
+#    join_to_fcst(obs)
+
+#This one includes some units transformations, as suggested by Isabel
+if ({{param}} == "T2m" ){
+    print("Converting T2m forecasts and observations to Celsius\n")
+     fcst_obs <- join_to_fcst(
+             scale_point_forecast(fcst, -273.15, "degC"),
+             scale_point_obs(obs, T2m, -273.15, "degC")
+                        )
+            }
+ 
+else if ({{param}} == "Q2m" || {{param}} == "Q1000" || {{param}} == "Q850" || {{param}} == "Q700" ){
+     print("Converting Q forecasts and observations to g/kg \n")
+     fcst_obs <- join_to_fcst(
+          scale_point_forecast(fcst, 1000, "g/Kg", multiplicative = TRUE),
+          scale_point_obs(obs, {{param}}, 1000, "g/Kg", multiplicative = TRUE)
+                         )
+        }
+else {
+    print("No unit conversion \n")
+   fcst_obs <- fcst %>% join_to_fcst(obs)
+    }
+
+
+
 
    verif <- det_verify(
         fcst_obs,
