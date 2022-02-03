@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-DEST=/home/ms/dk/nhd/R/harmonie_harp/transfer
+SCRPATH=/home/ms/dk/nhd/R/harmonie_harp/transfer
 ORIG=/home/ms/ie/duuw/R/harmonie_harp/scr
 MODEL=EC9
 VPROF=1 #plot vertical profile = 1
 
-cd $DEST
+cd $SCRPATH
 py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
 
 
@@ -36,7 +36,7 @@ fi
 
 #Copy plots from duuw, or wherever they were generated
 # paths hardcoded in script for the moment
-$py38 ./get_new_plots.py -orig $ORIG -dest $DEST
+$py38 ./get_new_plots.py -orig $ORIG -dest $SCRPATH
 
 
 #Generate modified html for SYNOP
@@ -54,8 +54,10 @@ $py38 ./gen_html_from_template.py $MODEL ${DATE1} "DINI" "temp"
 fi
 
 #Transfer all figures  to hirlam
+cd $SCRPATH
 echo "Copying all the figures from $ORIG to hirlam"
 transfer_all_figs
+cd -
 
 #Send the modified html files to hirlam account:
 echo "Transferring updated html"
