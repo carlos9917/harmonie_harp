@@ -57,6 +57,12 @@ parser$add_argument("-sql_path_observation", type="character",
 parser$add_argument("-save_rds", action="store_false",
                 help="Save rds file for verification or not [default %(default)s]")
 
+parser$add_argument("-min_num_obs", type="integer",
+                    default=30,
+                    help="Minimum number of observations  to consider for the scores calculation [default %(default)s]",
+                    metavar="Integer")
+
+
 
 source("find_last_date.R")
 args <- parser$parse_args()
@@ -67,6 +73,7 @@ end_date <- args$final_date
 start_date <- args$start_date
 save_rds <- args$save_rds
 models <- strsplit(args$models,",")
+min_num_obs <- args$min_num_obs
 models_to_compare <-c()
 for (i in 1:lengths(models)) {
     models_to_compare <- append(models_to_compare, models[[1]][i])
@@ -152,8 +159,33 @@ for (param in parameters) {
         obs_path   = vobs_sql_path,
         stations = selected_stations
                              )
-   fcst_obs <- fcst %>%
-    join_to_fcst(obs)
+#Original version    
+#   fcst_obs <- fcst %>%
+#    join_to_fcst(obs)
+
+#This one includes some units transformations, as suggested by Isabel
+if ({{param}} == "T2m" ){
+    print("Converting T2m forecasts and observations to Celsius\n")
+     fcst_obs <- join_to_fcst(
+             scale_point_forecast(fcst, -273.15, "degC"),
+             scale_point_obs(obs, T2m, -273.15, "degC")
+                        )
+            }
+ 
+else if ({{param}} == "Q2m" || {{param}} == "Q1000" || {{param}} == "Q850" || {{param}} == "Q700" ){
+     print("Converting Q forecasts and observations to g/kg \n")
+     fcst_obs <- join_to_fcst(
+          scale_point_forecast(fcst, 1000, "g/Kg", multiplicative = TRUE),
+          scale_point_obs(obs, {{param}}, 1000, "g/Kg", multiplicative = TRUE)
+                         )
+        }
+else {
+    print("No unit conversion \n")
+   fcst_obs <- fcst %>% join_to_fcst(obs)
+    }
+
+
+
 
    verif <- det_verify(
         fcst_obs,
@@ -162,6 +194,16 @@ for (param in parameters) {
               show_progress = FALSE,
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
+
+   #filter the cases in which  there were not enough observations
+   cat("--------------------------------------------\n")
+   cat("Number of cases before filtering ",length(verif$det_summary_scores$num_cases),"\n")
+   verif <- filter_list(verif, num_cases > min_num_obs)
+   print("Number of cases remaining after filtering ")
+   #No idea why it does not print as before, complains of "invalid printing digits". Printing it separately
+   print(length(verif$det_summary_scores$num_cases))
+   cat("--------------------------------------------\n")
+
    #Save the verif data. Naming of rds setup automatically by harp
    if (domain == "None" && save_rds) {
        cat("Saving scores for the whole domain \n")

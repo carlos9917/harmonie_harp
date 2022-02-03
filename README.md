@@ -32,5 +32,3 @@ cca_dini25a_l90_arome
 EC9
 
 ### STILL TO DO:
-- Add scores on a map
-

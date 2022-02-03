@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/err_plot
-#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/out_plot
+#SBATCH --error=/home/ms/ie/duuw/R/harmonie_harp/scr/cron_plot.err
+#SBATCH --output=/home/ms/ie/duuw/R/harmonie_harp/scr/cron_plot.out
 #SBATCH --job-name=harp
 
 # Script to plot the scores for ECDS
