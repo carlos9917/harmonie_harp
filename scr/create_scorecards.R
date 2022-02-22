@@ -75,10 +75,10 @@ if (end_date == "None")
     #end_date <- 2021092718
 }
 
-pngfile <- paste(paste("scorecards",as.character(start_date),as.character(end_date),sep="_"),".png",sep="")
+pngfile <- paste(paste("scorecards",fcst_model,as.character(start_date),as.character(end_date),sep="_"),".png",sep="")
 #Change title if doing it for a particular domain
 if (domain != "None"){
-    pngfile <- paste(paste("scorecards",domain,as.character(start_date),as.character(end_date),sep="_"),".png",sep="")
+    pngfile <- paste(paste("scorecards",fcst_model,domain,as.character(start_date),as.character(end_date),sep="_"),".png",sep="")
     }
 
 

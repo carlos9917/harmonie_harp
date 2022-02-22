@@ -14,6 +14,7 @@ FORCE=1 # 1: do not check if models last dates match
 module load R
 
 SCRPATH=/home/ms/ie/duuw/R/harmonie_harp/scr
+OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI
 cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
@@ -83,6 +84,9 @@ Rscript ./vertical_profiles.R -date $VDATE
 fi
 
 #Do this so that nhd can copy the files and then upload to hirlam
+[ ! -d $OUTDIR ] && mkdir -p $OUTDIR
+
 for PNG in `ls *png`; do
 chmod 755 $PNG
+mv $PNG $OUTDIR
 done

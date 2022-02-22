@@ -7,13 +7,14 @@
 # Used only for the ECDS and EC9 data
 module load R
 DINI=1
+DINI_3dvar=1
 REF=1
 VOBS=1
 AUTOSELDATES=0 #sets IDATE as last avail date in sqlfile, EDATE=IDATE+6d
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then 
-   IDATE=2021122400
-   EDATE=2021123100
+   IDATE=2022012600
+   EDATE=2022021700
    #if [ -f ./lastdate.txt ]; then
    #  echo "Using last date from ./lastdate.txt as beginning date"
    #  IDATE=`cat ./lastdate.txt`
@@ -51,6 +52,9 @@ VFLD_EC9=/scratch/ms/ie/duuw/vfld_vobs_sample/vfld
 
 ### DINI
 [ $DINI == 1 ] && ./read_save_vfld.R -start_date $IDATE -final_date $EDATE -model "cca_dini25a_l90_arome" -vfld_path=$VFLD_DINI -vfld_sql $SQL_DINI_FC
+
+### DINI 3dvar
+[ $DINI_3dvar == 1 ] && ./read_save_vfld.R -start_date $IDATE -final_date $EDATE -model "cca_dini25a_l90_arome_3dvar_v1" -vfld_path=$VFLD_DINI -vfld_sql $SQL_DINI_FC
 #
 ### EC9
 [ $REF == 1 ] && ./read_save_vfld.R -start_date $IDATE -final_date $EDATE -model "EC9" -vfld_path=$VFLD_EC9 -vfld_sql $SQL_DINI_FC
