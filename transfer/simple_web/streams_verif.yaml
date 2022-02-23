@@ -1,0 +1,39 @@
+#config file for the generating the html table
+#DINI:
+# SCORES:
+#   VARS:
+#     - RH2m
+#     - Pmsl
+#     - T2m
+#     - S10m
+#   MODEL:
+#     - cca_dini25a_l90_arome
+#     - cca_dini25a_l90_arome_3dvar_v1
+#   VERIF_DOM:
+#     - DINI
+#     - DK
+#     - NL
+#     - IE_EN
+#     - IS
+# SCORECARDS:
+#   MODEL:
+#     - cca_dini25a_l90_arome
+#     - cca_dini25a_l90_arome_3dvar_v1
+NL:
+ SCORES:
+   VARS:
+     - RH2m
+     - Pmsl
+     - T2m
+     - S10m
+   MODEL:
+     - vflddatatrunk_r17057_update
+     - vflddata43h22tg3
+     - vflddataWFP_43h22tg3
+   VERIF_DOM:
+     - NL
+ SCORECARDS:
+   MODEL:
+     - vflddatatrunk_r17057_update
+     - vflddata43h22tg3
+     - vflddataWFP_43h22tg3
