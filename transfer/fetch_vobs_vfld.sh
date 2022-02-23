@@ -11,6 +11,7 @@ DINI=1
 REF=1 #usually EC9
 
 TEST_MODEL=cca_dini25a_l90_arome
+TEST_MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
 REF_MODEL=EC9
 
 NOW=`date +'%Y%m%d_%H%M%S'`
@@ -31,8 +32,12 @@ fi
 echo ">>>>>>>>>>>> VOBS <<<<<<<<<<<<<<<<<<<<<<<<<"
 [ $VOBS == 1 ] && ./update_vobs_data.sh $YDAY
 
-echo ">>>>>>>>>>>> VFLD $TEST_MODEL <<<<<<<<<<<<<<<<<<<<<<<<<"
-[ $DINI == 1 ] && ./update_dini.sh $YDAY $TEST_MODEL
+echo ">>>>>>>>>>>> VFLD ${TEST_MODELS[@]} <<<<<<<<<<<<<<<<<<<<<<<<<"
+if [ $DINI == 1 ]; then
+   for TEST_MODEL in ${TEST_MODELS[@]}; do
+    ./update_dini.sh $YDAY $TEST_MODEL
+   done
+fi
 
 #This one will do the whole month for the moment...
 #Running it only on Wednesdays:

@@ -6,10 +6,10 @@
 # a more flexible version of the plot_scores.sh script, which
 # is used solely to produce plots for the ECDS run
 
-SCARDS=0 #calc score cards
+SCARDS=1 #calc score cards
 SCORES=1 #calc std scores
 VERT=0 #do vertical profiles
-OUTDIR=$SCRATCH/vfld_vobs_sample/verif_scores/NL_plots
+OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models
 
 module load R
 
@@ -19,7 +19,7 @@ cd $SCRPATH
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2022012000
-   EDATE=2022020100
+   EDATE=2022020900
    VDATE=2022012000
 else
    IDATE=$1
@@ -41,6 +41,7 @@ if [ $SCARDS == 1 ]; then
 #NOTE: using default values for data paths here. See defaults in script
 for MODEL in ${MODELS[@]}; do
     echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
+    #deactivating the output from the rds files, otherwise it will overwrite the ones from dini
     Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -fcst_model $MODEL -save_rds
 done
 fi
@@ -51,7 +52,8 @@ fi
 #Selecting station list from domain
 if [ $SCORES == 1 ]; then
 echo ">>>>>> Doing standard scores <<<<<<<<<"
-Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} -save_rds #dini25_sda,dini25_3dvar,EC9
+#Output for the models here, since the naming does not overwrite the ones from dini
+Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} #-save_rds 
 fi
 
 #VERTICAL PROFILES COMING HERE

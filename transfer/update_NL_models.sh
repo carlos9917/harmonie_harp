@@ -18,6 +18,7 @@ GITREPO=/home/ms/ie/duuw/R/harmonie_harp
 VFLD_PATH=/scratch/ms/nl/nkc/oprdata
 ORIG="ecfs" #default origin of data. Alternative is local path (ie XPATH above)
 #
+#Do the last 7 days or indicate first and last day to process
 if [[ -z $1 ]] && [[ -z $2 ]]; then
   YDAY=`date --date "1 days ago" +'%Y%m%d'`
   IDATE=`date -d "$YDAY - 7 days" +'%Y%m%d%H'`
@@ -27,7 +28,6 @@ if [[ -z $1 ]] && [[ -z $2 ]]; then
 else
   IDATE=$1
   EDATE=$2
-
 fi
 
 DAY_REQUESTED=`echo $DATE | awk '{print substr($1,7,2)}'`

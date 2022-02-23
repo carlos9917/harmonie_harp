@@ -149,7 +149,8 @@ for (param in parameters) {
       by         = by_step,
       file_path  = fcst_sql_path
     )
-    
+    # make sure only considering forecasts for same time and location
+    fcst <- common_cases(fcst)
     
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(
