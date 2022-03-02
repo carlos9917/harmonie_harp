@@ -21,6 +21,11 @@ if __name__=="__main__":
                         default=None,
                         required=True)
 
+    parser.add_argument('-ref_model',metavar='Ref model for scorecards',
+                        type=str,
+                        default="EC9",
+                        required=False)
+
     parser.add_argument('-domain',metavar='domain for the calculations',
                         type=str,
                         default=None,
@@ -43,6 +48,7 @@ if __name__=="__main__":
 
     args = parser.parse_args()
     model = args.model
+    ref_model = args.ref_model
     period = args.period
     domain = args.domain
     score_type = args.score_type
@@ -57,6 +63,9 @@ if __name__=="__main__":
     #    period = sys.argv[2]
     #    domain = sys.argv[3]
     #    score_type = sys.argv[4]
+    if not os.path.isdir(os.path.join(root, 'html')):
+        os.makedirs(os.path.join(root, 'html'))
+
 
     # change the timestamp in index.html
     template = env.get_template('index.html')
@@ -70,30 +79,32 @@ if __name__=="__main__":
 
     #Modify the html template for score cards
     template = env.get_template('scorecards.html')
-    if domain == "DINI" and score_type == "synop":
-        filename = os.path.join(root, 'html', 'scorecards.html')
+    if domain == "DINI" and score_type == "synop_scorecards":
+        filename = os.path.join(root, 'html', 'scorecards_'+model+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
                  model = model,
+                 ref_model = ref_model,
                  period = period.replace("_"," to "),
                  figspath = figspath,
-                 pngfile="scorecards_"+period+".png"
+                 pngfile="scorecards_"+model+"_"+period+".png"
             
             			))
-    elif score_type == "synop":
-        filename = os.path.join(root, 'html', 'scorecards_'+domain+'.html')
+    elif score_type == "synop_scorecards":
+        filename = os.path.join(root, 'html', 'scorecards_'+model+'_'+domain+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
                  model = model,
+                 ref_model = ref_model,
                  period = period.replace("_"," to "),
                  figspath = figspath,
-                 pngfile="scorecards_"+domain+"_"+period+".png",
+                 pngfile="scorecards_"+model+"_"+domain+"_"+period+".png",
                  domain = domain
             			))
     
     #Modify the html template for standard scores
     template = env.get_template('scores.html')
-    if domain == "DINI" and score_type == "synop":
+    if domain == "DINI" and score_type == "synop_scores":
         filename = os.path.join(root, 'html', 'scores.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
@@ -104,7 +115,7 @@ if __name__=="__main__":
                  pngpmsl="bias_stde_Pmsl_"+period+".png",
                  pngrh2m="bias_stde_RH2m_"+period+".png",
             			))
-    elif score_type == "synop":
+    elif score_type == "synop_scores":
         filename = os.path.join(root, 'html', 'scores_'+domain+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(

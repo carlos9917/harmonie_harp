@@ -5,6 +5,8 @@ ORIG=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI
 MODEL=EC9
 VPROF=1 #plot vertical profile = 1
 HIRLAMPATH=/data/portal/uwc_west
+TEST_MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
+COPYFIGS=1 #1 for copy figs
 
 cd $SCRPATH
 py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
@@ -39,16 +41,21 @@ fi
 
 #Copy plots from duuw, or wherever they were generated
 # paths hardcoded in script for the moment
-$py38 ./get_new_plots.py -orig $ORIG -dest $FIGS
+[ $COPYFIGS == 1 ] && $py38 ./get_new_plots.py -orig $ORIG -dest $FIGS
 
 
 #Generate modified html for SYNOP
 cd $SCRPATH/simple_web
 for DOMAIN in DK IE_EN NL IS DINI;  do 
 echo "Updating SYNOP plots in html templates"
-$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop"
+$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scores"
 done
 
+for DOMAIN in DK IE_EN NL IS DINI;  do
+  for MODEL in ${TEST_MODELS[@]}; do
+    $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards"
+  done
+done
 #Only do vertical for DINI
 #It only needs one date plot
 if [ $VPROF == 1 ]; then
