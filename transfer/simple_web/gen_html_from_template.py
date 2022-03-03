@@ -54,15 +54,6 @@ if __name__=="__main__":
     score_type = args.score_type
     figspath = args.figspath
 
-    #if len(sys.argv) == 1:
-    #    print("Please provide model, period and domain. Ex: EC9 20210901-20210930 DINI")
-    #    print("WARNING: NOT CHECKING arguments at this moment")
-    #    sys.exit(1)
-    #else:
-    #    model = sys.argv[1]
-    #    period = sys.argv[2]
-    #    domain = sys.argv[3]
-    #    score_type = sys.argv[4]
     if not os.path.isdir(os.path.join(root, 'html')):
         os.makedirs(os.path.join(root, 'html'))
 
@@ -80,18 +71,18 @@ if __name__=="__main__":
     #Modify the html template for score cards
     template = env.get_template('scorecards.html')
     if domain == "DINI" and score_type == "synop_scorecards":
-        filename = os.path.join(root, 'html', 'scorecards_'+model+'.html')
+        filename = os.path.join(root, 'html', 'scorecards_'+model+'_'+ref_model+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
                  model = model,
                  ref_model = ref_model,
                  period = period.replace("_"," to "),
                  figspath = figspath,
-                 pngfile="scorecards_"+model+"_"+period+".png"
-            
+                 pngfile="scorecards_"+model+"_"+period+".png",
+                 domain = domain
             			))
     elif score_type == "synop_scorecards":
-        filename = os.path.join(root, 'html', 'scorecards_'+model+'_'+domain+'.html')
+        filename = os.path.join(root, 'html', 'scorecards_'+model+'_'+ref_model+'_'+domain+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
                  model = model,
