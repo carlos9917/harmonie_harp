@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 import os
 import sys
+from datetime import datetime
 root = os.path.dirname(os.path.abspath(__file__))
 templates_dir = os.path.join(root, 'templates')
 env = Environment( loader = FileSystemLoader(templates_dir)  )
@@ -57,15 +58,15 @@ if __name__=="__main__":
     if not os.path.isdir(os.path.join(root, 'html')):
         os.makedirs(os.path.join(root, 'html'))
 
-
+    verif_period = datetime.strftime(datetime.strptime(period.split("_")[0],"%Y%m%d%H"),"%B %Y")
     # change the timestamp in index.html
     template = env.get_template('index.html')
     filename = os.path.join(root, 'html', 'index.html')
-    from datetime import datetime
     lastmodified = datetime.strftime(datetime.now(),"%Y/%m/%d %H:%M:%S")
     with open(filename, 'w') as fh:
         fh.write(template.render(
-             lastmodified = lastmodified
+             lastmodified = lastmodified,
+             verif_period = verif_period
             			))
 
     #Modify the html template for score cards
@@ -105,6 +106,7 @@ if __name__=="__main__":
                  pngu10m="bias_stde_S10m_"+period+".png",
                  pngpmsl="bias_stde_Pmsl_"+period+".png",
                  pngrh2m="bias_stde_RH2m_"+period+".png",
+                 domain = domain
             			))
     elif score_type == "synop_scores":
         filename = os.path.join(root, 'html', 'scores_'+domain+'.html')
@@ -139,6 +141,3 @@ if __name__=="__main__":
                  domain = domain
             			))
         
-    #TODO:
-    #template = env.get_template('score_cards_threshold.html')
-    #template = env.get_template('vertical_profiles.html')
