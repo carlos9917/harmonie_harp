@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ECDS validation  </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2> Verification for {{models}} </h2>
+The <b> EC9 </b> model is used as reference.
+<br>
+The verification is done for the current month.
+<br>
+<b> Last modification: {{lastmodified}} </b>
+<br>
+The calculation of the scorecards follows the score card
+generation <a href = "https://harphub.github.io/harp/articles/scorecards.html" > tutorial </a>
+<!-- <img src="http://hirlam.org/portal/uwc_west_validation/figs/scores.png" alt="Scores 2021"> -->
+<br>
+Some scores can also be visualized loading the rds files uploaded to the <a href = "https://shiny.hirlam.org/harpVis/"> harpVis shiny app </a>. Static plots are included below.
+<br>
+<br>
+<b>Deterministic scores </b>
+{{table_scores}}
+<br>
+<b>Score cards </b>
+{{table_scorecards}}
+</body>
+</html>
+

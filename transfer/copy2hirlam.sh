@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 SCRPATH=/home/ms/dk/nhd/R/harmonie_harp/transfer
-ORIG=/home/ms/ie/duuw/R/harmonie_harp/scr
+FIGS=$SCRPATH/figs
+ORIG=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI
 MODEL=EC9
 VPROF=1 #plot vertical profile = 1
+HIRLAMPATH=/data/portal/uwc_west
+TEST_MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
+COPYFIGS=1 #1 for copy figs
 
 cd $SCRPATH
 py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
@@ -12,8 +16,9 @@ function transfer_all_figs()
 {
 #Copying over the figures to hirlam
 for PNG in `ls -1 *png`; do
+ echo ">>>> Taking figures from $PWD"
  chmod 755 $PNG
- scp -p $PNG cperalta@hirlam.org:/data/portal/uwc_west/figs/
+ scp -p $PNG cperalta@hirlam.org:$HIRLAMPATH/figs/
  #FPRE=`echo $PNG | awk '{print substr($1,1,10)}'`
  #if [ $FPRE == "scorecards" ]; then
  # DATE1=`echo $PNG | awk -F"_" '{print $2}'`
@@ -36,41 +41,45 @@ fi
 
 #Copy plots from duuw, or wherever they were generated
 # paths hardcoded in script for the moment
-$py38 ./get_new_plots.py -orig $ORIG -dest $SCRPATH
+[ $COPYFIGS == 1 ] && $py38 ./get_new_plots.py -orig $ORIG -dest $FIGS
 
 
 #Generate modified html for SYNOP
-cd simple_web
+cd $SCRPATH/simple_web
 for DOMAIN in DK IE_EN NL IS DINI;  do 
 echo "Updating SYNOP plots in html templates"
-$py38 ./gen_html_from_template.py $MODEL ${DATE1}_${DATE2}  $DOMAIN "synop"
+$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scores"
 done
 
+for DOMAIN in DK IE_EN NL IS DINI;  do
+  for MODEL in ${TEST_MODELS[@]}; do
+    $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards"
+  done
+done
 #Only do vertical for DINI
 #It only needs one date plot
 if [ $VPROF == 1 ]; then
 echo "Updating TEMP plots in html templates"
-$py38 ./gen_html_from_template.py $MODEL ${DATE1} "DINI" "temp"
+$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1} -domain "DINI" -score_type "temp"
 fi
 
 #Transfer all figures  to hirlam
-cd $SCRPATH
 echo "Copying all the figures from $ORIG to hirlam"
+cd $FIGS
 transfer_all_figs
-cd -
 
 #Send the modified html files to hirlam account:
+cd $SCRPATH/simple_web/html
 echo "Transferring updated html"
-chmod 755 html/scorecards.html
-chmod 755 html/scores.html
-chmod 755 html/*.html
+#chmod 755 scorecards.html
+#chmod 755 scores.html
+chmod 755 *.html
 #chmod 744 index.html
+#scp -p index.html cperalta@hirlam.org:$HIRLAMPATH
 
-scp -p index.html cperalta@hirlam.org:/data/portal/uwc_west
-
-cd html
 for HTML in `ls *.html`;do
   echo "Sending $HTML to hirlam"
-  scp -p $HTML cperalta@hirlam.org:/data/portal/uwc_west
+  scp -p $HTML cperalta@hirlam.org:$HIRLAMPATH
 done
-cd -
+
+cd $SCRPATH
