@@ -78,7 +78,7 @@ models_to_compare <-c()
 for (i in 1:lengths(models)) {
     models_to_compare <- append(models_to_compare, models[[1]][i])
 }
-
+cat("Models to compare ",models_to_compare,"\n")
 #Path with the sqlite data
 #fcst_sql_path        <- "/scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE"
 #vobs_sql_path        <- "/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE"
