@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 SCRPATH=/home/ms/dk/nhd/R/harmonie_harp/transfer
-FIGS=$SCRPATH/figs
+#FIGS=$SCRPATH/figs
 ORIG=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI
 MODEL=EC9
 VPROF=1 #plot vertical profile = 1
 HIRLAMPATH=/data/portal/uwc_west
 TEST_MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
-COPYFIGS=1 #1 for copy figs
+#COPYFIGS=1 #1 for copy figs
+HIRLAMSERV=cperalta@hirlam.org
 
 cd $SCRPATH
 py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
@@ -15,16 +16,10 @@ py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
 function transfer_all_figs()
 {
 #Copying over the figures to hirlam
-for PNG in `ls -1 *png`; do
+for PNG in `ls -1 $FIGS/*png`; do
  echo ">>>> Taking figures from $PWD"
- chmod 755 $PNG
- scp -p $PNG cperalta@hirlam.org:$HIRLAMPATH/figs/
- #FPRE=`echo $PNG | awk '{print substr($1,1,10)}'`
- #if [ $FPRE == "scorecards" ]; then
- # DATE1=`echo $PNG | awk -F"_" '{print $2}'`
- # DATE2=`echo $PNG | awk -F"_" '{print $3}' | awk -F"." '{print $1}'`
- #fi
- #echo $DATE1 $DATE2
+ #chmod 755 $PNG #not possible if I am copying from duuw
+ scp -p $PNG $HIRLAMDEST #cperalta@hirlam.org:$HIRLAMPATH/figs/
 done
 }
 
@@ -41,41 +36,58 @@ fi
 
 #Copy plots from duuw, or wherever they were generated
 # paths hardcoded in script for the moment
-[ $COPYFIGS == 1 ] && $py38 ./get_new_plots.py -orig $ORIG -dest $FIGS
+#[ $COPYFIGS == 1 ] && $py38 ./get_new_plots.py -orig $ORIG -dest $FIGS
 
 
 #Generate modified html for SYNOP
 cd $SCRPATH/simple_web
 for DOMAIN in DK IE_EN NL IS DINI;  do 
-echo "Updating SYNOP plots in html templates"
-$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scores"
+echo "Updating SCORES in html templates"
+$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scores" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCORES"
 done
 
+echo "Updating SCORECARDS in html templates"
 for DOMAIN in DK IE_EN NL IS DINI;  do
   for MODEL in ${TEST_MODELS[@]}; do
-    $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards"
+  $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_EC9" -ref "EC9"
   done
+  #This one is to do the dini to dini_3dvar comparison
+  $py38 ./gen_html_from_template.py -model "cca_dini25a_l90_arome" -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards" -ref_model "cca_dini25a_l90_arome_3dvar_v1" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_cca_dini25a_l90_arome_3dvar_v1"
 done
 #Only do vertical for DINI
 #It only needs one date plot
 if [ $VPROF == 1 ]; then
 echo "Updating TEMP plots in html templates"
-$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1} -domain "DINI" -score_type "temp"
+$py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1} -domain "DINI" -score_type "temp" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/VPROF"
 fi
 
 #Transfer all figures  to hirlam
 echo "Copying all the figures from $ORIG to hirlam"
-cd $FIGS
-transfer_all_figs
+#cd $FIGS
+FIGS=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCORES/
+HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/SCORES
+echo "Copying all the figures from $FIGS to $HIRLAMDEST"
+transfer_all_figs $FIGS $HIRLAMDEST
+
+FIGS=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_EC9
+HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/SCARDS/ref_EC9
+echo "Copying all the figures from $FIGS to $HIRLAMDEST"
+transfer_all_figs $FIGS $HIRLAMDEST
+
+FIGS=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_cca_dini25a_l90_arome_3dvar_v1
+HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/SCARDS/ref_cca_dini25a_l90_arome_3dvar_v1
+echo "Copying all the figures from $FIGS to $HIRLAMDEST"
+transfer_all_figs $FIGS $HIRLAMDEST
+
+FIGS=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/VPROF
+HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/VPROF
+echo "Copying all the figures from $FIGS to $HIRLAMDEST"
+transfer_all_figs $FIGS $HIRLAMDEST
 
 #Send the modified html files to hirlam account:
 cd $SCRPATH/simple_web/html
 echo "Transferring updated html"
-#chmod 755 scorecards.html
-#chmod 755 scores.html
 chmod 755 *.html
-#chmod 744 index.html
-#scp -p index.html cperalta@hirlam.org:$HIRLAMPATH
 
 for HTML in `ls *.html`;do
   echo "Sending $HTML to hirlam"
