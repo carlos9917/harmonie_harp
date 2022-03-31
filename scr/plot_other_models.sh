@@ -9,7 +9,18 @@
 SCARDS=1 #calc score cards
 SCORES=1 #calc std scores
 VERT=0 #do vertical profiles
-OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models
+
+move_pics() 
+{
+   #Do this so that nhd can copy the files and then upload to hirlam
+   [ ! -d $OUTDIR ] && mkdir -p $OUTDIR
+
+   for PNG in `ls *png`; do
+     chmod 755 $PNG
+     mv $PNG $OUTDIR
+   done
+ }
+
 
 module load R
 
@@ -39,10 +50,12 @@ MODELS_STRING=`echo ${STR_MODELS%,}` #last comma taken out
 if [ $SCARDS == 1 ]; then
 # Plot score cards
 #NOTE: using default values for data paths here. See defaults in script
+OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models/SCARDS
 for MODEL in ${MODELS[@]}; do
     echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
-    #deactivating the output from the rds files, otherwise it will overwrite the ones from dini
+    #deactivating the output from the rds files here, shiny cannot use them
     Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -fcst_model $MODEL -save_rds
+    move_pics
 done
 fi
 
@@ -54,12 +67,16 @@ if [ $SCORES == 1 ]; then
 echo ">>>>>> Doing standard scores <<<<<<<<<"
 #Output for the models here, since the naming does not overwrite the ones from dini
 Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} #-save_rds 
+OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models/SCORES
+move_pics
 fi
 
 #VERTICAL PROFILES COMING HERE
 if [ $VERT == 1 ]; then
 echo ">>>>>> Doing vertical profiles for $VDATE <<<<<<<<<"
 Rscript ./vertical_profiles.R -date $VDATE
+OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models/VPROF
+move_pics
 #Rscript ./vertical_profiles.R -date $VDATE -domain "NL"
 #Rscript ./vertical_profiles.R -date $VDATE -domain "IS"
 #Rscript ./vertical_profiles.R -date $VDATE -domain "IE_EN"
@@ -69,10 +86,3 @@ Rscript ./vertical_profiles.R -date $VDATE
 #Rscript ./vertical_profiles.R -date $EDATE -station 6060,6181 -domain "DK"
 fi
 
-#Do this so that nhd can copy the files and then upload to hirlam
-# 
-[ ! -d $OUTDIR ] && mkdir -p $OUTDIR
-for PNG in `ls *png`; do
-chmod 755 $PNG
-mv $PNG $OUTDIR
-done
