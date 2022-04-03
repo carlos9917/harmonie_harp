@@ -11,15 +11,15 @@ function pack_scores
     TAR=verif_scores.tar
     TGZ=verif_scores.tar.gz
     cd $SCORES
-    tar -cf $TAR -C vertical_profiles .
+    #tar -cf $TAR -C vertical_profiles .
+    #tar -rf $TAR -C score_cards .
     tar -rf $TAR -C std_scores .
-    tar -rf $TAR -C score_cards .
     gzip -f $TAR
     chmod 755 $TGZ
     cd -
 }
 
 TODAY=`date +'%Y%m%d'`
-echo "Packing the scores on $TODAY"
+echo "Packing the synop scores on $TODAY"
 pack_scores
 echo "Packed scores in $SCORES/$TGZ"
