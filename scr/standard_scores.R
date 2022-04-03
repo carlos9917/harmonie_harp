@@ -191,7 +191,6 @@ else {
    verif <- det_verify(
         fcst_obs,
         param,
-        #thresholds    = quantile(obs$S10m, c(0.25, 0.5, 0.75, 0.9, 0.95)),
               show_progress = FALSE,
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
@@ -204,11 +203,24 @@ else {
    #No idea why it does not print as before, complains of "invalid printing digits". Printing it separately
    print(length(verif$det_summary_scores$num_cases))
    cat("--------------------------------------------\n")
-
+   
    #Save the verif data. Naming of rds setup automatically by harp
    if (domain == "None" && save_rds) {
        cat("Saving scores for the whole domain \n")
-       save_point_verif(verif,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
+       #test here if I can do the summarizing and save separately?
+       #library(dplyr)
+       #verif_filter_rds <- verif
+       #verif_filter_rds$det_summary_scores <- verif_filter_rds$det_summary_scores %>%
+       #        filter(fcst_cycle %in% c("00", "06", "12", "18")) %>%
+       #         group_by(leadtime) %>%
+       #         summarize(meanbias= mean(bias),meanstd=mean(stde),mname=mname,num_cases=num_cases)
+       #cat("Doing summarizing of data based on all cycles\n")
+       #cat("--------------------------------------------\n")
+       #cat(verif_filter_rds)
+       #cat("--------------------------------------------\n")
+
+       verif_save <- det_verify(fcst_obs, param, show_progress = FALSE) # no groupings here, save raw verification
+       save_point_verif(verif_save,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
    }    
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,
                          facet_by = vars(fcst_cycle),

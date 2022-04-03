@@ -35,10 +35,15 @@ dom_corners <- function(domain)
          }
      if (domain == "NL") #Netherlands bounding box
      {
-         slat <- 51.0
-         wlon <- 1.5
-         nlat <- 54.5
-         elon <- 9.0
+         #these were found in monitor:
+         #slat <- 51.0
+         #wlon <- 1.5
+         #nlat <- 54.5
+         #elon <- 9.0
+         slat <- 49.0
+         wlon <- 0.0
+         nlat <- 55.9
+         elon <- 11.1
          corner_list <- list(slat=slat,wlon=wlon,nlat=nlat,elon=elon)
          return(corner_list)
 
