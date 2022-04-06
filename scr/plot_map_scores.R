@@ -30,10 +30,10 @@ parser$add_argument("-final_date", type="character",
     metavar="Date in format YYYYMMDDHH")
 
 #List of models. SEPARATED by COMMA
-parser$add_argument("-models", type="character",
-    default="EC9,cca_dini25a_l90_arome",
-    help="Comma separated values for models [default %(default)s]",
-    metavar="Provide models to evaluate as a string with commas")
+parser$add_argument("-model", type="character",
+    default="cca_dini25a_l90_arome",
+    help="Model [default %(default)s]",
+    metavar="Provide model to evaluate")
 
 parser$add_argument("-sql_path_forecast", type="character",
     default="/scratch/ms/ie/duuw/vfld_vobs_sample/FCTABLE",
@@ -63,15 +63,10 @@ vobs_sql_path <- args$sql_path_observation
 end_date <- args$final_date
 start_date <- args$start_date
 save_rds <- args$save_rds
-models <- strsplit(args$models,",")
+model <- args$model
 min_num_obs <- args$min_num_obs
 score <- args$score
 
-models_to_compare <-c()
-for (i in 1:lengths(models)) {
-    models_to_compare <- append(models_to_compare, models[[1]][i])
-}
-cat("Models to compare ",models_to_compare,"\n")
 
 cat("Plotting scores period ",start_date,"-",end_date,"\n")
 
@@ -110,7 +105,7 @@ for (param in parameters) {
       start_date = start_date,
       end_date   = end_date,
       stations = selected_stations,
-      fcst_model = models_to_compare,
+      fcst_model = model,
       fcst_type  = "det",
       parameter  = param,
       by         = by_step,
@@ -157,11 +152,14 @@ else {
         )
    #filter the cases in which  there were not enough observations
    #verif_tdf_sid <- filter_list(verif_tdf_sid, num_cases > min_num_obs)
-   #print(fcst_obs[["cca_dini25a_l90_arome"]])
+   #print(fcst_obs[[model]])
+   max_date = max(fcst_obs[[model]]$validdate,na.rm=TRUE)
+   min_date = min(fcst_obs[[model]]$validdate,na.rm=TRUE)
    source("maps_utils.R")
    #map_df <- set_map_df(verif_tdf_sid,models,fcst)
    #map_df,min_lat,max_lat,min_lon,max_lon,par_unit <- set_map_df(verif_tdf_sid,models,fcst)
-   map_input <- set_map_df(verif_tdf_sid,models,fcst_obs[["cca_dini25a_l90_arome"]])
+   #map_input <- set_map_df(verif_tdf_sid,models,fcst_obs[["cca_dini25a_l90_arome"]])
+   map_input <- set_map_df(verif_tdf_sid,fcst_obs[[model]])
    map_df <- map_input[1]$det_summary_scores
    min_lat <- map_input[3][[1]]
    max_lat <- map_input[4][[1]]
@@ -179,7 +177,7 @@ else {
    fig_width <- 10
    fig_height <- 7
    png_archive <- "/home/ms/dk/nhd/R/harmonie_harp/scr"
-   subtitle_str <- "test"#not used at the moment
+   subtitle_str <- paste0("Period: ",min_date," to ",max_date) #not used at the moment
    stat_choice <- score
    title_str <- paste0(score," for all stations in DINI domain")
    map_df <- as.data.frame(map_df)

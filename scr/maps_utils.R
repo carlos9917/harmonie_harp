@@ -3,7 +3,7 @@
 
 # Define the map dataframe to be plotted
 # 
-set_map_df <- function(verif,models,fcst)
+set_map_df <- function(verif,fcst)
 {
 
     # Get the corresponding lat/lons in order to plot a map
@@ -161,7 +161,7 @@ surfacemap <- function(map_df,
     #facet_wrap("cca_model")+
     labs(
       title = title_str, # "paste0(ts," : ",title_str),
-      #subtitle = subtitle_str,
+      subtitle = subtitle_str,
       fill = "",
       size = ""
     
