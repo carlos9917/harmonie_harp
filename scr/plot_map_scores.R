@@ -96,7 +96,8 @@ if ( domain != "None") {
     }
 }
 
-parameters <- c("T2m", "S10m", "RH2m", "Pmsl") #,"AccPcp12h","AccPcp24h")
+#parameters <- c("T2m", "S10m", "RH2m", "Pmsl") #,"AccPcp12h","AccPcp24h")
+parameters <- c("S10m","T2m", "RH2m", "Pmsl")
 by_step <- "12h"
 
 for (param in parameters) {
@@ -143,6 +144,21 @@ else {
    fcst_obs <- fcst %>% join_to_fcst(obs)
     }
 
+# Filter infrequent stations
+library(dplyr)
+min_stations <- 20 #inlcude only stations which appear more than this number of times
+count_sids <- count(fcst_obs[[model]],SID)
+sids_filter <- count_sids$SID[count_sids$n > min_stations]
+sids_avoid <- count_sids$SID[count_sids$n <= min_stations] #just to compare
+#print(sids_filter)
+#fcst_obs[[model]] <- fcst_obs[[model]] %>% filter(fcst_obs[[model]],SID %in% sids_filter)
+##fcst_obs[[model]] <- fcst_obs[[model]] %>% filter_list(fcst_obs[[model]],SID %in% sids_filter)
+#fcst_obs[[model]]$SID<- filter(fcst_obs[[model]]$SID, SID %in% sids_filter)
+
+fcst_obs[[model]] <- filter(fcst_obs[[model]],SID %in% sids_filter)
+
+
+
    #following same naming as James' example
    verif_tdf_sid <- det_verify(
             fcst_obs,
@@ -150,6 +166,9 @@ else {
             show_progress = FALSE,
             groupings = c("SID")
         )
+   filter_bad_scores<- filter_list(verif_tdf_sid, bias < -20)
+   print(filter_bad_scores)
+   quit("no")
    #filter the cases in which  there were not enough observations
    #verif_tdf_sid <- filter_list(verif_tdf_sid, num_cases > min_num_obs)
    #print(fcst_obs[[model]])
