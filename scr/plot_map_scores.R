@@ -144,20 +144,16 @@ else {
    fcst_obs <- fcst %>% join_to_fcst(obs)
     }
 
-# Filter infrequent stations
-library(dplyr)
-min_stations <- 20 #inlcude only stations which appear more than this number of times
-count_sids <- count(fcst_obs[[model]],SID)
-sids_filter <- count_sids$SID[count_sids$n > min_stations]
-sids_avoid <- count_sids$SID[count_sids$n <= min_stations] #just to compare
-#print(sids_filter)
-#fcst_obs[[model]] <- fcst_obs[[model]] %>% filter(fcst_obs[[model]],SID %in% sids_filter)
-##fcst_obs[[model]] <- fcst_obs[[model]] %>% filter_list(fcst_obs[[model]],SID %in% sids_filter)
-#fcst_obs[[model]]$SID<- filter(fcst_obs[[model]]$SID, SID %in% sids_filter)
-
-fcst_obs[[model]] <- filter(fcst_obs[[model]],SID %in% sids_filter)
-
-
+   # Filter infrequent stations. I tried this to avoid cases
+   # with extremely large bias. This worked for German stations but
+   # did not get rid of bad stations in Scotland. Filtering
+   # by num_cases instead (see further down)
+   #library(dplyr)
+   #min_stations <- 20 #inlcude only stations which appear more than this number of times
+   #count_sids <- count(fcst_obs[[model]],SID)
+   #sids_filter <- count_sids$SID[count_sids$n > min_stations]
+   #sids_avoid <- count_sids$SID[count_sids$n <= min_stations] #just to compare
+   #fcst_obs[[model]] <- filter(fcst_obs[[model]],SID %in% sids_filter)
 
    #following same naming as James' example
    verif_tdf_sid <- det_verify(
@@ -166,18 +162,20 @@ fcst_obs[[model]] <- filter(fcst_obs[[model]],SID %in% sids_filter)
             show_progress = FALSE,
             groupings = c("SID")
         )
-   filter_bad_scores<- filter_list(verif_tdf_sid, bias < -20)
-   print(filter_bad_scores)
-   quit("no")
+   #Test here to check which stations have a stupid bias.
+   #Example below for wind speed
+   #filter_bad_scores<- filter_list(verif_tdf_sid, bias < -70)
+   #print(filter_bad_scores)
+   #quit("no")
+
    #filter the cases in which  there were not enough observations
-   #verif_tdf_sid <- filter_list(verif_tdf_sid, num_cases > min_num_obs)
+   # This might help alleviate the issue with stations with bad obs
+   # Using the approach based on number of stations
+   verif_tdf_sid <- filter_list(verif_tdf_sid, num_cases > min_num_obs)
    #print(fcst_obs[[model]])
    max_date = max(fcst_obs[[model]]$validdate,na.rm=TRUE)
    min_date = min(fcst_obs[[model]]$validdate,na.rm=TRUE)
    source("maps_utils.R")
-   #map_df <- set_map_df(verif_tdf_sid,models,fcst)
-   #map_df,min_lat,max_lat,min_lon,max_lon,par_unit <- set_map_df(verif_tdf_sid,models,fcst)
-   #map_input <- set_map_df(verif_tdf_sid,models,fcst_obs[["cca_dini25a_l90_arome"]])
    map_input <- set_map_df(verif_tdf_sid,fcst_obs[[model]])
    map_df <- map_input[1]$det_summary_scores
    min_lat <- map_input[3][[1]]
