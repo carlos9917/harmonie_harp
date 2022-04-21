@@ -51,6 +51,7 @@ set_map_df <- function(verif,fcst)
 
 surfacemap <- function(map_df,
                        param,
+                       model,
                        stat_choice,
                        par_unit,
                        ptype, 
@@ -158,7 +159,6 @@ surfacemap <- function(map_df,
     
 	 )+
     facet_wrap(vars(mname))+
-    #facet_wrap("cca_model")+
     labs(
       title = title_str, # "paste0(ts," : ",title_str),
       subtitle = subtitle_str,
@@ -168,7 +168,7 @@ surfacemap <- function(map_df,
 	)+
     guides(size="none") # Remove size label from legend
   p_map <- p_map + p_map_col
-  pngfile <- paste(paste("map",stat_choice,param,start_date,end_date,sep="_"),".png",sep="")
+  pngfile <- paste(paste("map",model,stat_choice,param,start_date,end_date,sep="_"),".png",sep="")
 
   ggsave(p_map,filename=pngfile,path=png_archive,width=fig_width,height=fig_height)
 

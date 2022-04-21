@@ -6,12 +6,14 @@
 # Script to plot the scores for ECDS
 
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
-SCARDS=1 #calc score cards
+SCARDS=1 #calc score cards. Do this when one month of data available
 SCORES=1 #calc std scores
 VERT=1 #do vertical profiles
+MAPS=1 #do maps
 FORCE=1 # 1: do not check if models last dates match
 MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
 REF_MODEL=EC9
+MIN_OBS=30 #min number of obs 
 
 move_pics() 
 {
@@ -33,9 +35,17 @@ if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    IDATE=2021120100
    EDATE=2021123123
    VDATE=2022011700 #This one is for the vertical profiles
+   #these two are for score cards only
+   IDATE_SCARDS=2022030100
+   EDATE_SCARDS=2022033123
 else
    IDATE=$1
    EDATE=$2
+   IDATE_SCARDS=$3
+   EDATE_SCARDS=$4
+   #temporarily forcing these
+   IDATE_SCARDS=2022030100
+   EDATE_SCARDS=2022033123
    #selecting vertical profile date as first date. I usually get missing data in one of the variables when using the last
    VDATE=$IDATE
 fi
@@ -59,20 +69,20 @@ else
 fi
 
 if [ $SCARDS == 1 ]; then
-# Plot score cards
+# Plot score cards. DO ONLY ONCE A MONTH
 #NOTE: using default values for data paths here. See defaults in script
-# NOT saving the data in rds format (setting save_rds to false here),
+# NOT saving the data in rds format 
 # since it cannot be plotted in shiny anyway
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_${REF_MODEL}
   REF_MODEL=EC9
   echo "REF_MODEL hard coded as $REF_MODEL"
 for MODEL in ${MODELS[@]}; do
   echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL 
   move_pics
 done
   #Extra comparison
@@ -81,11 +91,11 @@ done
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_${REF_MODEL}
   echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
   echo "REF_MODEL hard coded as $REF_MODEL"
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
-  Rscript ./create_scorecards.R -start_date $IDATE -final_date $EDATE -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL -save_rds
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL 
+  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL 
   move_pics
 fi
 
@@ -123,3 +133,12 @@ echo ">>>>>> Doing vertical profiles for $VDATE <<<<<<<<<"
 #Rscript ./vertical_profiles.R -date $EDATE -station 6060,6181 -domain "DK"
 fi
 
+if [ $MAPS == 1 ]; then
+  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS
+  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
+  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS -score "rmse"
+  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS -score "rmse"
+  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
+  OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/MAPS
+  move_pics
+fi

@@ -53,8 +53,8 @@ parser$add_argument("-sql_path_observation", type="character",
     metavar="Observation data")
 
 #NOTE: store_false sets this to TRUE if the argument is NOT called, otherwise to FALSE if it is called
-# Hence it is TRUE by default
-parser$add_argument("-save_rds", action="store_false",
+# Hence it is FALSE by default
+parser$add_argument("-save_rds", action="store_true",
                 help="Save rds file for verification or not [default %(default)s]")
 
 parser$add_argument("-min_num_obs", type="integer",
@@ -205,8 +205,9 @@ else {
    cat("--------------------------------------------\n")
    
    #Save the verif data. Naming of rds setup automatically by harp
-   if (domain == "None" && save_rds) {
-       cat("Saving scores for the whole domain \n")
+   if (domain == "None" || save_rds) {
+       cat("Saving scores for domain",domain," \n")
+
        #test here if I can do the summarizing and save separately?
        #library(dplyr)
        #verif_filter_rds <- verif
@@ -225,6 +226,7 @@ else {
                                 show_progress = FALSE,
                                 groupings = c("leadtime", "SID", "lat", "lon"))
        #do the same filtering here
+       print("Filtering rds output for a min number of stations")
        verif_save <- filter_list(verif_save, num_cases > min_num_obs)
        save_point_verif(verif_save,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
    }    

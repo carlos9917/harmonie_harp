@@ -29,7 +29,6 @@ parser$add_argument("-final_date", type="character",
     help="Final date to process [default %(default)s]",
     metavar="Date in format YYYYMMDDHH")
 
-#List of models. SEPARATED by COMMA
 parser$add_argument("-model", type="character",
     default="cca_dini25a_l90_arome",
     help="Model [default %(default)s]",
@@ -113,8 +112,9 @@ for (param in parameters) {
       file_path  = fcst_sql_path
     )
     # make sure only considering forecasts for same time and location
-    fcst <- common_cases(fcst)
-    
+    #This makes no sense here, since only one model!
+    # For some reason it did not crash in the newest version of harp
+    #fcst <- common_cases(fcst)
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(
         start_date = first_validdate(fcst),
@@ -162,6 +162,7 @@ else {
             show_progress = FALSE,
             groupings = c("SID")
         )
+    cat("Read observations for ",param,"\n")
    #Test here to check which stations have a stupid bias.
    #Example below for wind speed
    #filter_bad_scores<- filter_list(verif_tdf_sid, bias < -70)
@@ -193,7 +194,7 @@ else {
    ptype <- "det"
    fig_width <- 10
    fig_height <- 7
-   png_archive <- "/home/ms/dk/nhd/R/harmonie_harp/scr"
+   png_archive <- "."
    subtitle_str <- paste0("Period: ",min_date," to ",max_date) #not used at the moment
    stat_choice <- score
    title_str <- paste0(score," for all stations in DINI domain")
@@ -201,6 +202,7 @@ else {
 
    surfacemap(map_df,
               param,
+              model,
               stat_choice,
               par_unit,
               ptype,
@@ -215,6 +217,5 @@ else {
               fig_width,
               fig_height)
     #pngfile <- paste(paste("map",param,start_date,end_date,sep="_"),".png",sep="")
-
     #ggsave(the_map,filename=pngfile,width=fig_width,height=fig_height)
 }

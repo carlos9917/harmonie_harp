@@ -66,7 +66,7 @@ fi
 if [ $SCORES == 1 ]; then
 echo ">>>>>> Doing standard scores <<<<<<<<<"
 #Output for the models here, since the naming does not overwrite the ones from dini
-Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} -min_num_obs 100 #-save_rds 
+Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} 
 OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models/SCORES
 move_pics
 fi
