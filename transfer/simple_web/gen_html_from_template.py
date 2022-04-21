@@ -95,8 +95,8 @@ if __name__=="__main__":
             			))
     
     #Modify the html template for standard scores
-    template = env.get_template('scores.html')
     if domain == "DINI" and score_type == "synop_scores":
+        template = env.get_template('scores.html')
         filename = os.path.join(root, 'html', 'scores.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
@@ -109,6 +109,7 @@ if __name__=="__main__":
                  domain = domain
             			))
     elif score_type == "synop_scores":
+        template = env.get_template('scores.html')
         filename = os.path.join(root, 'html', 'scores_'+domain+'.html')
         with open(filename, 'w') as fh:
             fh.write(template.render(
@@ -122,10 +123,9 @@ if __name__=="__main__":
             			))
         
     #Modify the html template for vertical profiles
-    template = env.get_template('vertical_profiles.html')
-    filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
-    
     if score_type == "temp":
+        template = env.get_template('vertical_profiles.html')
+        filename = os.path.join(root, 'html', 'vertical_profiles_'+domain+'.html')
         if "_" in period:
             print("Please provide only one date for period")
             sys.exit(1)
@@ -141,3 +141,15 @@ if __name__=="__main__":
                  domain = domain
             			))
         
+    if domain == "DINI" and score_type == "synop_maps":
+        template = env.get_template('maps.html')
+        filename = os.path.join(root, 'html', "_".join(['maps',domain,'bias',model])+'.html')
+        with open(filename, 'w') as fh:
+            fh.write(template.render(
+                 model = model,
+                 period = period.replace("_"," to "),
+                 figspath = figspath,
+                 pngmap_bias_S10m="_".join(["map",model,"bias","S10m",period])+".png",
+                 pngmap_bias_T2m="_".join(["map",model,"bias","T2m",period])+".png",
+                 domain = domain
+            			))
