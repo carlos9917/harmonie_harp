@@ -6,7 +6,7 @@
 # a more flexible version of the plot_scores.sh script, which
 # is used solely to produce plots for the ECDS run
 
-SCARDS=1 #calc score cards
+SCARDS=0 #calc score cards
 SCORES=1 #calc std scores
 VERT=0 #do vertical profiles
 
@@ -66,7 +66,7 @@ fi
 if [ $SCORES == 1 ]; then
 echo ">>>>>> Doing standard scores <<<<<<<<<"
 #Output for the models here, since the naming does not overwrite the ones from dini
-Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} #-save_rds 
+Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING} -min_num_obs 100 #-save_rds 
 OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/NL_models/SCORES
 move_pics
 fi

@@ -130,7 +130,7 @@ if ( domain != "None") {
     {
         cat(domain," not in available domain list for domain selection!\n")
         cat("Available domains ",available_domains,"\n")   
-        quit(1)
+        quit("yes")
     }
 }
 
@@ -219,7 +219,13 @@ else {
        #cat(verif_filter_rds)
        #cat("--------------------------------------------\n")
 
-       verif_save <- det_verify(fcst_obs, param, show_progress = FALSE) # no groupings here, save raw verification
+       # I will be using a different grouping for the rds output
+       verif_save <- det_verify(fcst_obs, 
+                                param, 
+                                show_progress = FALSE,
+                                groupings = c("leadtime", "SID", "lat", "lon"))
+       #do the same filtering here
+       verif_save <- filter_list(verif_save, num_cases > min_num_obs)
        save_point_verif(verif_save,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
    }    
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,

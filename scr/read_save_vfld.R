@@ -76,7 +76,7 @@ for (param in surface_params)
 cat("<<<<<< PROCESSING UPPER AIR PARAMETERS for ",fcst_model, ">>>>>>>\n")
 for (param in vertical_params)
 {
-    cat("Saving ",param,"\n")
+    cat("Saving ",param," from ",first_fcst," to ",last_fcst,"\n")
     read_forecast(
       start_date    = first_fcst,
       end_date      = last_fcst,
