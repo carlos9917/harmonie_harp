@@ -17,7 +17,7 @@ function transfer_all_figs()
 {
 #Copying over the figures to hirlam
 for PNG in `ls -1 $FIGS/*png`; do
- echo ">>>> Taking figures from $PWD"
+ echo ">>>> Taking figures from $FIGS"
  #chmod 755 $PNG #not possible if I am copying from duuw
  scp -p $PNG $HIRLAMDEST #cperalta@hirlam.org:$HIRLAMPATH/figs/
 done
@@ -32,6 +32,8 @@ if [[ -z $1 ]] && [[ -z $2 ]]; then
 else
     DATE1=$1
     DATE2=$2
+    DATE1_SCARDS=2022030100
+    DATE2_SCARDS=2022033123
 fi
 
 #Copy plots from duuw, or wherever they were generated
@@ -49,10 +51,10 @@ done
 echo "Updating SCORECARDS in html templates"
 for DOMAIN in DK IE_EN NL IS DINI;  do
   for MODEL in ${TEST_MODELS[@]}; do
-  $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_EC9" -ref "EC9"
+  $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1_SCARDS}_${DATE2_SCARDS}  -domain $DOMAIN -score_type "synop_scorecards" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_EC9" -ref "EC9"
   done
   #This one is to do the dini to dini_3dvar comparison
-  $py38 ./gen_html_from_template.py -model "cca_dini25a_l90_arome" -period ${DATE1}_${DATE2}  -domain $DOMAIN -score_type "synop_scorecards" -ref_model "cca_dini25a_l90_arome_3dvar_v1" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_cca_dini25a_l90_arome_3dvar_v1"
+  $py38 ./gen_html_from_template.py -model "cca_dini25a_l90_arome" -period ${DATE1_SCARDS}_${DATE2_SCARDS}  -domain $DOMAIN -score_type "synop_scorecards" -ref_model "cca_dini25a_l90_arome_3dvar_v1" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/SCARDS/ref_cca_dini25a_l90_arome_3dvar_v1"
 done
 #Only do vertical for DINI
 #It only needs one date plot
@@ -60,6 +62,13 @@ if [ $VPROF == 1 ]; then
 echo "Updating TEMP plots in html templates"
 $py38 ./gen_html_from_template.py -model $MODEL -period ${DATE1} -domain "DINI" -score_type "temp" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/VPROF"
 fi
+
+echo "Updating bias maps"
+$py38 ./gen_html_from_template.py -model cca_dini25a_l90_arome -period ${DATE1}_${DATE2}  -domain "DINI" -score_type "synop_maps" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/MAPS"
+
+$py38 ./gen_html_from_template.py -model cca_dini25a_l90_arome_3dvar_v1 -period ${DATE1}_${DATE2}  -domain "DINI" -score_type "synop_maps" -figspath "https://hirlam.org/portal/uwc_west_validation/figs/MAPS"
+
+# ############################################################
 
 #Transfer all figures  to hirlam
 echo "Copying all the figures from $ORIG to hirlam"
@@ -84,6 +93,11 @@ HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/VPROF
 echo "Copying all the figures from $FIGS to $HIRLAMDEST"
 transfer_all_figs $FIGS $HIRLAMDEST
 
+FIGS=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/MAPS
+HIRLAMDEST=$HIRLAMSERV:/data/portal/uwc_west/figs/MAPS
+echo "Copying all the figures from $FIGS to $HIRLAMDEST"
+transfer_all_figs $FIGS $HIRLAMDEST
+
 #Send the modified html files to hirlam account:
 cd $SCRPATH/simple_web/html
 echo "Transferring updated html"
@@ -93,5 +107,10 @@ for HTML in `ls *.html`;do
   echo "Sending $HTML to hirlam"
   scp -p $HTML cperalta@hirlam.org:$HIRLAMPATH
 done
+
+#This one only needs to be done once. Remember to have them with 755 permits
+#cd $SCRPATH/simple_web/templates
+#scp -p style.css cperalta@hirlam.org:$HIRLAMPATH
+#scp -p script.js cperalta@hirlam.org:$HIRLAMPATH
 
 cd $SCRPATH
