@@ -3,6 +3,10 @@ library(RSQLite)
 #Only these domains have been hard-coded below for SYNOP stations!
 available_domains <- c("DK","DKland","DKcoast","Greenland","IE_EN","NL","IS")
 
+# Keepig here a list of really bad stations to exclude
+really_bad_stations <- c(1400,3031,3034,3035,3037,3039,3065,4003,4360,10222,10280,10192,10215,10235,11124,12510)
+
+
 #This one returns only the corners of selected domains
 #Currently being used to select TEMP stations 
 dom_corners <- function(domain)
