@@ -56,6 +56,8 @@ parser$add_argument("-score", type="character",
 
 
 args <- parser$parse_args()
+#some helpfer functions to select bad stations
+source("select_stations.R")
 
 fcst_sql_path <- args$sql_path_forecast
 vobs_sql_path <- args$sql_path_observation
@@ -78,7 +80,6 @@ selected_stations <- NULL
 
 
 if ( domain != "None") { 
-     source("select_stations.R")
      sql_file <- "/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE/OBSTABLE_2021.sqlite"
     #NOTE: available domains is defined in select_stations.R
     #Selection based on domain and pre-selected list
@@ -115,6 +116,10 @@ for (param in parameters) {
     #This makes no sense here, since only one model!
     # For some reason it did not crash in the newest version of harp
     #fcst <- common_cases(fcst)
+    #filter bad stations
+   cat("Filtering out stations ",really_bad_stations,"\n")
+   fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
+
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(
         start_date = first_validdate(fcst),

@@ -6,10 +6,11 @@
 # Script to plot the scores for ECDS
 
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
-SCARDS=1 #calc score cards. Do this when one month of data available
+SCARDS=0 #calc score cards. Do this when one month of data available
 SCORES=1 #calc std scores
 VERT=1 #do vertical profiles
 MAPS=1 #do maps
+SCAT=1 #do scatter plots
 FORCE=1 # 1: do not check if models last dates match
 MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
 REF_MODEL=EC9
@@ -134,11 +135,23 @@ echo ">>>>>> Doing vertical profiles for $VDATE <<<<<<<<<"
 fi
 
 if [ $MAPS == 1 ]; then
+    echo ">>>>> Doing maps with scores <<<<<"
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS -score "rmse"
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS -score "rmse"
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/MAPS
+  move_pics
+fi
+
+if [ $SCAT == 1 ]; then
+    MODELS+=(EC9) # add EC9 to this list
+    STR_MODELS=`printf '%s,' "${MODELS[@]}"`
+    MODELS_STRING=`echo ${STR_MODELS%,}` #last comma taken out
+    echo ">>>>>> Doing scatter plots for ${MODELS_STRING}  <<<<<<<<<"
+    #Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING}
+    Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models cca_dini25a_l90_arome,cca_dini25a_l90_arome_3dvar_v1
+  OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCAT
   move_pics
 fi

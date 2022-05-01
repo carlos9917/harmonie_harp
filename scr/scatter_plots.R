@@ -170,7 +170,7 @@ else {
    fcst_obs <- fcst %>% join_to_fcst(obs)
     }
 
-    print(names(fcst_obs))
+    #print(names(fcst_obs))
 ## function to combine all, from Andrew's tutorials
     plot_fun <- function(fcst_model, fcst_obs, param) {
         plot_scatter(fcst_obs, fcst_model, param) + labs(title = fcst_model) 
