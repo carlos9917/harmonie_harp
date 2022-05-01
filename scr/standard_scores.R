@@ -63,8 +63,10 @@ parser$add_argument("-min_num_obs", type="integer",
                     metavar="Integer")
 
 
-
+#some helper functions to find last avail date
 source("find_last_date.R")
+#some helper functions here, as well as a list of stations to exclude
+source("select_stations.R")
 args <- parser$parse_args()
 
 fcst_sql_path <- args$sql_path_forecast
@@ -108,9 +110,7 @@ selected_stations <- NULL
 
 #models_to_compare <- c(ref_model, fcst_model)
 
-
 if ( domain != "None") { 
-     source("select_stations.R")
      sql_file <- "/scratch/ms/ie/duuw/vfld_vobs_sample/OBSTABLE/OBSTABLE_2021.sqlite"
      #Old alternative method: select by station range
      #SID_beg <- strsplit(args$SID_range,",")[[1]][1]
@@ -134,7 +134,7 @@ if ( domain != "None") {
     }
 }
 
-parameters <- c("T2m", "S10m", "RH2m", "Pmsl") #,"AccPcp12h","AccPcp24h")
+parameters <- c("S10m","T2m", "RH2m", "Pmsl") #,"AccPcp12h","AccPcp24h")
 by_step <- "12h"
 
 for (param in parameters) {
@@ -151,6 +151,9 @@ for (param in parameters) {
     )
     # make sure only considering forecasts for same time and location
     fcst <- common_cases(fcst)
+    #filter bad stations
+    cat("Filtering out stations ",really_bad_stations,"\n")
+    fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
     
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(
@@ -195,6 +198,25 @@ else {
            groupings = list("leadtime",c("leadtime", "fcst_cycle"))
         )
 
+### Test: check if something is too wrong
+
+   #check_fc <- bind_fcst(fcst_obs) # this creates a dataframe
+   #check_fc <- mutate(check_fc,bias=forecast-S10m) #cal the bias
+  #if ({{param}} == "S10m") {
+  #   get_terrible_bias <- filter_list(verif, abs(verif$det_summary_scores$bias) > 0.4)
+  #   print("bad bias")
+  #   print(get_terrible_bias)
+  #   #order_bias  <- arrange(verif$det_summary_scores, bias)
+  #   print("original")
+  #   print(verif) #$det_summary_scores)
+  #   #print(verif["cca_dini25a_l90_arome"]$det_summary_scores)
+  #   stations_extreme_bias <- unique(get_terrible_bias$SID)
+  #   print("Checking stations with awful bias for wind speed")
+  #   print(stations_extreme_bias)
+  #   quit("no")
+  #}
+
+
    #filter the cases in which  there were not enough observations
    cat("--------------------------------------------\n")
    cat("Number of cases before filtering ",length(verif$det_summary_scores$num_cases),"\n")
@@ -206,7 +228,6 @@ else {
    
    #Save the verif data. Naming of rds setup automatically by harp
    if (domain == "None" || save_rds) {
-       cat("Saving scores for domain",domain," \n")
 
        #test here if I can do the summarizing and save separately?
        #library(dplyr)
@@ -225,9 +246,17 @@ else {
                                 param, 
                                 show_progress = FALSE,
                                 groupings = c("leadtime", "SID", "lat", "lon"))
+       #The following snippet is to filter the SIDs of really bad stations
+       #get_terrible_bias <- filter_list(verif_save, abs(verif_save$det_summary_scores$bias) > 10)
+       #avoid_these <- unique(get_terrible_bias$det_summary_scores$SID)
+       #print("Bad stations")
+       #print(avoid_these)
+       #quit("no")
+       ###########################################################
        #do the same filtering here
        print("Filtering rds output for a min number of stations")
        verif_save <- filter_list(verif_save, num_cases > min_num_obs)
+       cat("Saving scores for domain",domain," \n")
        save_point_verif(verif_save,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
    }    
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,
