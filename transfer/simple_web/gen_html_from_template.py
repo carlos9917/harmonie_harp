@@ -153,3 +153,16 @@ if __name__=="__main__":
                  pngmap_bias_T2m="_".join(["map",model,"bias","T2m",period])+".png",
                  domain = domain
             			))
+    if domain == "DINI" and score_type == "scatter_plots":
+        template = env.get_template('scatter.html')
+        filename = os.path.join(root, 'html', "_".join(['scatter',domain])+'.html')
+        with open(filename, 'w') as fh:
+            fh.write(template.render(
+                 period = period.replace("_"," to "),
+                 figspath = figspath,
+                 pngscat_S10m="scatterplot_S10m_"+period+".png",
+                 pngscat_T2m="scatterplot_T2m_"+period+".png",
+                 pngscat_RH2m="scatterplot_RH2m_"+period+".png",
+                 pngscat_Pmsl="scatterplot_Pmsl_"+period+".png",
+                 domain = domain
+                               ))
