@@ -116,9 +116,10 @@ for (param in parameters) {
     #This makes no sense here, since only one model!
     # For some reason it did not crash in the newest version of harp
     #fcst <- common_cases(fcst)
-    #filter bad stations
-   cat("Filtering out stations ",really_bad_stations,"\n")
-   fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
+
+    #filter bad stations. Commented on 20220507, we will keep them in the maps
+    # cat("Filtering out stations ",really_bad_stations,"\n")
+    #fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
 
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(

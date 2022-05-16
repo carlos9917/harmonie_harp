@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 #Calculate bias and stde (add other scores as needed)
 # Plots them in two panels, one on top of each other
 # 
@@ -52,10 +54,19 @@ parser$add_argument("-sql_path_observation", type="character",
     help="Path for sqlite files with observations [default %(default)s]",
     metavar="Observation data")
 
+parser$add_argument("-rds_path", type="character",
+    default="/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores",
+    help="Path for saving the rds files [default %(default)s]",
+    metavar="Verification data")
+
 #NOTE: store_false sets this to TRUE if the argument is NOT called, otherwise to FALSE if it is called
 # Hence it is FALSE by default
 parser$add_argument("-save_rds", action="store_true",
                 help="Save rds file for verification or not [default %(default)s]")
+
+# FALSE by default
+parser$add_argument("-skip_png", action="store_true",
+                help="Export png files. False by default [default %(default)s]")
 
 parser$add_argument("-min_num_obs", type="integer",
                     default=30,
@@ -150,10 +161,15 @@ for (param in parameters) {
       file_path  = fcst_sql_path
     )
     # make sure only considering forecasts for same time and location
+    if (length(models_to_compare) > 1) {
     fcst <- common_cases(fcst)
-    #filter bad stations
-    cat("Filtering out stations ",really_bad_stations,"\n")
-    fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
+    }
+    else {
+        cat("Not doing the common_cases, since only one model: ",args$models)
+    }
+    #filter bad stations. Just for testing, avoid including bad stations in map plots later
+    #cat("Filtering out stations ",really_bad_stations,"\n")
+    #fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
     
     cat("Read observations for ",param,"\n")
     obs <- read_point_obs(
@@ -244,8 +260,9 @@ else {
        # I will be using a different grouping for the rds output
        verif_save <- det_verify(fcst_obs, 
                                 param, 
-                                show_progress = FALSE,
-                                groupings = c("leadtime", "SID", "lat", "lon"))
+                                show_progress = FALSE)
+                                #20220507 turning this grouping off
+                                #groupings = c("leadtime", "SID", "lat", "lon"))
        #The following snippet is to filter the SIDs of really bad stations
        #get_terrible_bias <- filter_list(verif_save, abs(verif_save$det_summary_scores$bias) > 10)
        #avoid_these <- unique(get_terrible_bias$det_summary_scores$SID)
@@ -257,8 +274,10 @@ else {
        print("Filtering rds output for a min number of stations")
        verif_save <- filter_list(verif_save, num_cases > min_num_obs)
        cat("Saving scores for domain",domain," \n")
-       save_point_verif(verif_save,"/scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/std_scores")
+       save_point_verif(verif_save,args$rds_path)
    }    
+
+  if (!args$skip_png) {
    bias <- plot_point_verif(verif, bias,plot_num_cases=FALSE,x_axis=leadtime,
                          facet_by = vars(fcst_cycle),
                          filter_by = vars(grepl(";", fcst_cycle)))
@@ -266,13 +285,17 @@ else {
    stde <- plot_point_verif(verif, stde,plot_num_cases=FALSE,x_axis=leadtime,
                          facet_by = vars(fcst_cycle),
                         filter_by = vars(grepl(";", fcst_cycle)))
-bias_stde <- plot_grid(bias, stde, align='h', rel_widths=c(0.5,0.5), nrow = 2,
-labels=c('',''))
+    bias_stde <- plot_grid(bias, stde, align='h', rel_widths=c(0.5,0.5), nrow = 2,
+    labels=c('',''))
 
     pngfile <- paste(paste("bias","stde",param,start_date,end_date,sep="_"),".png",sep="")
     if (domain != "None"){
-    pngfile <- paste(paste("bias","stde",param,start_date,end_date,domain,sep="_"),".png",sep="")
-    }
+                   pngfile <- paste(paste("bias","stde",param,start_date,end_date,domain,sep="_"),".png",sep="")
+                         }
 
-ggsave(pngfile)
+    ggsave(pngfile)
+  }
+  else {
+       print("Not exporting the png plots")
+       }
 }
