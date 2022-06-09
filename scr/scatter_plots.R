@@ -135,9 +135,9 @@ for (param in parameters) {
     )
     # make sure only considering forecasts for same time and location
     fcst <- common_cases(fcst)
-    #filter bad stations
-    cat("Filtering out stations ",really_bad_stations,"\n")
-    fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
+    #filter bad stations. Turned off on 20220507
+    # cat("Filtering out stations ",really_bad_stations,"\n")
+    # fcst <- fcst %>% filter_list(!SID %in% really_bad_stations)
 
     
     cat("Read observations for ",param,"\n")

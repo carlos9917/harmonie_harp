@@ -6,7 +6,7 @@
 # Script to plot the scores for ECDS
 
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
-SCARDS=0 #calc score cards. Do this when one month of data available
+SCARDS=1 #calc score cards. Do this when one month of data available
 SCORES=1 #calc std scores
 VERT=1 #do vertical profiles
 MAPS=1 #do maps
@@ -37,8 +37,8 @@ if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    EDATE=2021123123
    VDATE=2022011700 #This one is for the vertical profiles
    #these two are for score cards only
-   IDATE_SCARDS=2022030100
-   EDATE_SCARDS=2022033123
+   IDATE_SCARDS=2022040100
+   EDATE_SCARDS=2022043023
 else
    IDATE=$1
    EDATE=$2
@@ -110,8 +110,11 @@ if [ $SCORES == 1 ]; then
   MODELS_STRING=`echo ${STR_MODELS%,}` #last comma taken out
   echo ">>>>>> Doing standard scores for ${MODELS_STRING}  <<<<<<<<<"
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCORES
-
   Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING}
+  #test to write each model separately
+  #for MODEL in ${MODELS[@]}; do
+  #Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -models ${MODEL} -rds_path /scratch/ms/ie/duuw/vfld_vobs_sample/verif_scores/archive -skip_png
+  #done
   Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "DK" -models ${MODELS_STRING}
   Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "IE_EN" -models ${MODELS_STRING}
   Rscript ./standard_scores.R -start_date $IDATE -final_date $EDATE -domain "NL" -models ${MODELS_STRING}
