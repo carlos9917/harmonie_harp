@@ -17,7 +17,7 @@ py38=/hpc/perm/ms/dk/nhd/miniconda3/envs/py38/bin/python
 function transfer_all_figs()
 {
 #Copying over the figures to hirlam
-for PNG in `ls -1 $FIGS/*png`; do
+for PNG in `ls -1 $FIGS/*${DATE1}_${DATE2}*png`; do
  echo ">>>> Copying over figures from $FIGS"
  #chmod 755 $PNG #not possible if I am copying from duuw
  scp -p $PNG $HIRLAMDEST #cperalta@hirlam.org:$HIRLAMPATH/figs/
@@ -33,8 +33,8 @@ if [[ -z $1 ]] && [[ -z $2 ]]; then
 else
     DATE1=$1
     DATE2=$2
-    DATE1_SCARDS=2022030100
-    DATE2_SCARDS=2022033123
+    DATE1_SCARDS=2022050100
+    DATE2_SCARDS=2022053123
 fi
 
 #Copy plots from duuw, or wherever they were generated
