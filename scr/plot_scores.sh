@@ -6,13 +6,15 @@
 # Script to plot the scores for ECDS
 
 AUTOSELDATES=0 # select dates automatically based on last available for EC9
-SCARDS=1 #calc score cards. Do this when one month of data available
-SCORES=1 #calc std scores
-VERT=1 #do vertical profiles
+SCARDS=0 #calc score cards. Do this when one month of data available
+SCORES=0 #calc std scores
+VERT=0 #do vertical profiles
 MAPS=1 #do maps
 SCAT=1 #do scatter plots
 FORCE=1 # 1: do not check if models last dates match
 MODELS=(cca_dini25a_l90_arome cca_dini25a_l90_arome_3dvar_v1)
+#model cca_dini25a_l90_arome not running since May 3 2022
+MODELS=(cca_dini25a_l90_arome_3dvar_v1)
 REF_MODEL=EC9
 MIN_OBS=30 #min number of obs 
 
@@ -37,16 +39,13 @@ if [[ -z $1 ]] &&  [[ -z $2 ]]; then
    EDATE=2021123123
    VDATE=2022011700 #This one is for the vertical profiles
    #these two are for score cards only
-   IDATE_SCARDS=2022040100
-   EDATE_SCARDS=2022043023
+   IDATE_SCARDS=2022050100
+   EDATE_SCARDS=2022053123
 else
    IDATE=$1
    EDATE=$2
    IDATE_SCARDS=$3
    EDATE_SCARDS=$4
-   #temporarily forcing these
-   IDATE_SCARDS=2022030100
-   EDATE_SCARDS=2022033123
    #selecting vertical profile date as first date. I usually get missing data in one of the variables when using the last
    VDATE=$IDATE
 fi
@@ -86,18 +85,19 @@ for MODEL in ${MODELS[@]}; do
   Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL 
   move_pics
 done
+#Turning this off, since cca_dini25a_l90_arome not running anymore
   #Extra comparison
-  REF_MODEL=cca_dini25a_l90_arome_3dvar_v1
-  MODEL=cca_dini25a_l90_arome
-  OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_${REF_MODEL}
-  echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
-  echo "REF_MODEL hard coded as $REF_MODEL"
-  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -fcst_model $MODEL -ref_model $REF_MODEL 
-  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL 
-  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL 
-  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL 
-  Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL 
-  move_pics
+  #REF_MODEL=cca_dini25a_l90_arome_3dvar_v1
+  #MODEL=cca_dini25a_l90_arome
+  #OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCARDS/ref_${REF_MODEL}
+  #echo ">>>>>> Doing score cards for $MODEL <<<<<<<<<"
+  #echo "REF_MODEL hard coded as $REF_MODEL"
+  #Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -fcst_model $MODEL -ref_model $REF_MODEL 
+  #Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "DK" -fcst_model $MODEL -ref_model $REF_MODEL 
+  #Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IE_EN" -fcst_model $MODEL -ref_model $REF_MODEL 
+  #Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "NL" -fcst_model $MODEL -ref_model $REF_MODEL 
+  #Rscript ./create_scorecards.R -start_date $IDATE_SCARDS -final_date $EDATE_SCARDS -domain "IS" -fcst_model $MODEL -ref_model $REF_MODEL 
+  #move_pics
 fi
 
 # Plot standard scores
@@ -138,10 +138,11 @@ echo ">>>>>> Doing vertical profiles for $VDATE <<<<<<<<<"
 fi
 
 if [ $MAPS == 1 ]; then
-    echo ">>>>> Doing maps with scores <<<<<"
-  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS
-  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
-  Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS -score "rmse"
+  echo ">>>>> Doing maps with scores <<<<<"
+  # This model not running anymore
+  #Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS
+  #Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
+  #Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome -min_num_obs $MIN_OBS -score "rmse"
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS -score "rmse"
   Rscript ./plot_map_scores.R -start_date $IDATE -final_date $EDATE -model cca_dini25a_l90_arome_3dvar_v1 -min_num_obs $MIN_OBS
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/MAPS
@@ -154,7 +155,8 @@ if [ $SCAT == 1 ]; then
     MODELS_STRING=`echo ${STR_MODELS%,}` #last comma taken out
     echo ">>>>>> Doing scatter plots for ${MODELS_STRING}  <<<<<<<<<"
     #Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models ${MODELS_STRING}
-    Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models cca_dini25a_l90_arome,cca_dini25a_l90_arome_3dvar_v1
+    #Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models cca_dini25a_l90_arome,cca_dini25a_l90_arome_3dvar_v1
+    Rscript ./scatter_plots.R -start_date $IDATE -final_date $EDATE -models cca_dini25a_l90_arome_3dvar_v1
   OUTDIR=/scratch/ms/ie/duuw/vfld_vobs_sample/plots/DINI/SCAT
   move_pics
 fi
