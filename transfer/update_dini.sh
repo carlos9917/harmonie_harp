@@ -8,8 +8,8 @@ module load python3
 
 DAY_OF_THE_MONTH=`date +'%d'` # just to check the day of the month
 CURRENT_MONTH=`date +'%m'` # just to check the day of the month
-MODEL=cca_dini25a_l90_arome_3dvar_v1
 MODEL=cca_dini25a_l90_arome
+MODEL=cca_dini25a_l90_arome_3dvar_v1
 DEST=$SCRATCH/vfld_vobs_sample/vfld
 ORIG="ecfs" #default origin of data. 
 FORCE=1 #jump over the ecfs copy part

@@ -51,7 +51,7 @@ last_fcst <- args$final_date
 fclen <- args$fclen
 file_template <- args$file_temp
 
-surface_params  <- c("Pmsl","RH2m","S10m","T2m") #,"AccPcp12h","AccPcp24h") #Params to extract
+surface_params  <- c("Pmsl","RH2m","S10m","T2m","Pcp") #,"AccPcp12h","AccPcp24h") #Params to extract
 #allparams  <- c("AccPcp0h","AccPcp") #Params to extract
 vertical_params <- c("T","RH","S","D","Q")
 
@@ -72,7 +72,6 @@ for (param in surface_params)
     )
 
 }
-
 cat("<<<<<< PROCESSING UPPER AIR PARAMETERS for ",fcst_model, ">>>>>>>\n")
 for (param in vertical_params)
 {
