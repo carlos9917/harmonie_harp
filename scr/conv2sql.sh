@@ -6,15 +6,15 @@
 # Script to run the conversion from vfld and vobs to sqlite format.
 # Used only for the ECDS and EC9 data
 module load R
-DINI=1
-DINI_3dvar=1
+DINI=0
+DINI_3dvar=0
 REF=1
-VOBS=1
+VOBS=0
 AUTOSELDATES=0 #sets IDATE as last avail date in sqlfile, EDATE=IDATE+6d
 
 if [[ -z $1 ]] &&  [[ -z $2 ]]; then 
-   IDATE=2022012600
-   EDATE=2022021700
+   IDATE=2022070600
+   EDATE=2022071123
    #if [ -f ./lastdate.txt ]; then
    #  echo "Using last date from ./lastdate.txt as beginning date"
    #  IDATE=`cat ./lastdate.txt`
